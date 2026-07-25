@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOP 100 PXP26 — Partner.co</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a4a3a;
+    --green-mid: #2d7a5f;
+    --green-light: #3a9e78;
+    --gold: #c9a84c;
+    --white: #ffffff;
+    --off-white: #f4f8f6;
+    --border: #ddeee6;
+    --text: #111;
+    --text-mid: #444;
+    --text-light: #888;
+  }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    padding: 14px 20px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .logo { height: 38px; width: auto; display: block; }
+  .event-tag { font-size: 11px; background: var(--green); color: var(--white); padding: 4px 12px; border-radius: 20px; font-weight: 700; letter-spacing: 0.06em; }
+  h1 { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  h1 span { color: var(--green-mid); }
+
+  .search-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .search-box { flex: 1; min-width: 160px; padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; background: var(--white); color: var(--text); outline: none; }
+  .search-box:focus { border-color: var(--green-mid); }
+  select { padding: 10px 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--white); color: var(--text); outline: none; cursor: pointer; }
+
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .btn { border: none; border-radius: 10px; padding: 9px 16px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-green { background: var(--green); color: var(--white); }
+  .btn-green:hover { background: var(--green-mid); }
+  .btn-mid { background: var(--green-mid); color: var(--white); }
+  .btn-mid:hover { background: var(--green); }
+
+  .status { font-size: 11px; color: var(--green-mid); margin-top: 6px; font-weight: 600; min-height: 16px; }
+  .results-count { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; padding: 16px 14px; max-width: 1400px; margin: 0 auto; }
+
+  .card { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border: 1.5px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,74,58,0.13); }
+
+  .card-photo-wrap { width: 100%; height: 230px; position: relative; overflow: hidden; background: #e4f0ea; }
+  .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #ddf0e8, #c8e4d8); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #7aaa92; }
+  .photo-placeholder svg { width: 48px; height: 48px; opacity: 0.45; }
+  .photo-placeholder span { font-size: 12px; font-weight: 600; }
+
+  .rank-badge { position: absolute; top: 10px; left: 10px; background: var(--green); color: var(--gold); font-size: 14px; font-weight: 900; padding: 4px 11px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.22); }
+  .upload-btn { position: absolute; bottom: 10px; right: 10px; background: var(--green); color: var(--white); border: none; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .upload-btn:hover { background: var(--green-mid); }
+  .saving-indicator { position: absolute; bottom: 10px; left: 10px; background: var(--gold); color: var(--green); border-radius: 8px; padding: 4px 10px; font-size: 10px; font-weight: 700; display: none; }
+
+  .card-body { padding: 13px 15px 15px; }
+  .card-name { font-size: 17px; font-weight: 800; margin-bottom: 4px; line-height: 1.25; color: var(--text); }
+  .card-title { font-size: 12px; color: var(--green); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card-country { font-size: 15px; color: var(--text-mid); font-weight: 600; margin-bottom: 6px; }
+  .divider { height: 1px; background: var(--border); margin: 6px 0; }
+  .card-bio { font-size: 12px; color: #555; line-height: 1.55; }
+  .no-bio { font-size: 12px; color: var(--green-mid); cursor: pointer; font-weight: 600; }
+  .no-bio:hover { color: var(--green); }
+  .note-badge { display: inline-block; background: #fff8e1; color: #8a6a00; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-top: 6px; font-weight: 700; border: 1px solid #ffe58a; }
+
+  .no-results { text-align: center; padding: 60px 20px; color: var(--text-light); grid-column: 1/-1; font-size: 16px; }
+  .loading-screen { text-align: center; padding: 60px 20px; color: var(--green-mid); font-weight: 600; grid-column: 1/-1; font-size: 15px; }
+
+  input[type="file"] { display: none; }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+    .card-photo-wrap { height: 165px; }
+    .card-body { padding: 10px 11px 12px; }
+    .card-name { font-size: 14px; }
+    .card-title { font-size: 10px; }
+    .card-country { font-size: 13px; }
+    .rank-badge { font-size: 12px; padding: 3px 9px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <img class="logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMaXZlX0NvbnRlbnQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMjUgMTY3Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzI5NTI0ZDt9PC9zdHlsZT48L2RlZnM+PGNpcmNsZSBjbGFzcz0iY2xzLTEiIGN4PSI4MDcuNjYiIGN5PSIxMTguMjQiIHI9IjEwLjAzIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMzY5Ljc4LDYzLjc5YzAtMTQuMTQtNS41NC0yMC4wNy0xOC45Mi0yMC4wNy04LjYsMC0xNS44NiwzLjI1LTIxLjQxLDkuNzVsLTEzLjM4LTkuOTRjOC42LTEwLjUxLDIwLjI2LTE1LjQ4LDM2LjY5LTE1LjQ4LDE2LjI1LDAsMjcuMzMsNS4xNiwzMi42OCwxNS4yOSwyLjg3LDUuMzUsMy44MiwxMS42NiwzLjgyLDIzLjd2NjAuMDFoLTE1LjQ4cy0xLjM0LTYuMzEtMS4zNC02LjMxYy02LjEyLDYuMTItMTMuMTksOC4yMi0yNy4zMyw4LjIyLTI0LjQ2LDAtMzMuNDUtNy44NC0zMy40NS0yOS42MiwwLTIyLjM2LDkuMTctMzAuMDEsMzYuNy0zMC4wMWgyMS40MXMwLTUuNTQsMC01LjU0Wm0tMTkuMywxOS4zYy0xNC43MiwwLTIwLjI2LDQuNC0yMC4yNiwxNS44NiwwLDExLjA5LDQuOTcsMTQuNzIsMTkuNjksMTQuNzIsOS4xNywwLDE0LjUzLTEuNzIsMTcuNTgtNS43MywxLjcyLTIuNDgsMi4yOS01LjE2LDIuMjktMTIuMjN2LTEyLjYxcy0xOS4zLDAtMTkuMywwWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTQxMy45MywyOS45N2gxNS4xczIuMSw4LjIyLDIuMSw4LjIyYzYuMTItNy40NSwxMS44NS0xMC4xMywyMS43OS0xMC4xMyw3LjA3LDAsMTIuNDIsMS41MywxOS42OSw1LjU0bC04LjQxLDE2LjI1Yy00Ljk3LTMuNjMtOC42LTQuOTctMTMuMTktNC45Ny0xMi40MiwwLTE3LjU4LDEwLjMyLTE3LjU4LDM0Ljk4djQ3LjIxaC0xOS41VjI5Ljk3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTU1Mi41LDI5Ljk3aDE0LjkxczEuNTMsOS43NSwxLjUzLDkuNzVjNi4xMi04LjIyLDEzLjc2LTExLjY2LDI2LjU3LTExLjY2LDE3LjAxLDAsMjcuOSw2LjMxLDMyLjQ5LDE4LjczLDEuOTEsNS41NCwyLjg3LDEzLDIuODcsMjQuNjZ2NTUuNjJoLTE5LjV2LTUzLjUyYzAtMjAuNjQtNS4zNS0yOC44Ni0xOS4xMS0yOC44Ni0xNC43MiwwLTIwLjI2LDguOTgtMjAuMjYsMzIuNjh2NDkuNjloLTE5LjQ5VjI5Ljk3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTY2OS42Niw4Ni41NGMwLDE3LjU4LDguNDEsMjYuOTUsMjQuMDgsMjYuOTUsOS43NSwwLDE1Ljg2LTIuODcsMjEuMDItOS43NWwxNC41Myw4LjZjLTguMDMsMTEuODUtMTguOTIsMTYuNjMtMzcuNDYsMTYuNjMtMjguODYsMC00MS42Ni0xNC4xNC00MS42Ni00Ni4wNnYtNy40NWMwLTMzLjI2LDEyLjA0LTQ3LjQsNDAuNTItNDcuNCwyOC40OCwwLDQwLjUyLDE0LjE0LDQwLjUyLDQ3LjR2Ny42NWgtNjEuNTRzMCwzLjQ0LDAsMy40NFptNDMtMTcuMzl2LTEuOTFjMC0xNS42Ny03LjQ1LTI0LjA4LTIxLjQxLTI0LjA4LTguNzksMC0xNC4zMywyLjY4LTE3Ljc3LDguNi0yLjI5LDMuODItMy44Miw5Ljk0LTMuODIsMTUuNjd2MS43MnM0MywwLDQzLDBaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtNzUxLjY2LDI5Ljk3aDE1LjFzMi4xLDguMjIsMi4xLDguMjJjNi4xMi03LjQ1LDExLjg1LTEwLjEzLDIxLjc5LTEwLjEzLDcuMDcsMCwxMi40MiwxLjUzLDE5LjY5LDUuNTRsLTguNDEsMTYuMjVjLTQuOTctMy42My04LjYtNC45Ny0xMy4xOS00Ljk3LTEyLjQyLDAtMTcuNTgsMTAuMzItMTcuNTgsMzQuOTh2NDcuMjFoLTE5LjVWMjkuOTdaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtNTE0LjI3LDkyLjY1di00Ny4wMmgxOS4xMXMwLTE1LjY3LDAtMTUuNjdoLTE5LjExVi4zNHMtMTguNTQsMC0xOC41NCwwbC0uOTYsMjkuNjJoLTExLjI4czAsMTUuNjcsMCwxNS42N2gxMS4yOHY0NS4xYzAsMjkuNjIsNi41LDM2LjMxLDM1LjU1LDM2LjMxaDMuNDRzMC0xNi4wNSwwLTE2LjA1aC0zLjA2Yy0xMi42Mi4zOC0xNi40NC00LjItMTYuNDQtMTguMzVaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMjU3LjAxLDI4LjA1Yy0xMS44NSwwLTE5LjQ5LDIuNjgtMjYuNzYsOS4xN2wtMS45MS03LjI2aC0xNS4xczAsMTMxLjk4LDAsMTMxLjk4YzYuMDMsMy4zNSwxMi43OCw0LjksMTkuNSw0LjY5di00NS4zMmM2Ljg4LDUuMzUsMTQuMzMsNy42NSwyNC4yNyw3LjY1LDI1LjQyLDAsMzYuNS0xMy4xOSwzNi41LTQzLjE5di0xNC41M2MwLTMwLjAxLTExLjA5LTQzLjE5LTM2LjUtNDMuMTlabTE3LjIsNTYuMzhjMCwxOS42OS02LjUsMjguODYtMjAuNjQsMjguODYtMTMuOTUsMC0yMC44My04LjYtMjAuODMtMjUuOTl2LTE3LjU4YzAtMTcuMzksNi44OC0yNS45OSwyMC44My0yNS45OSwxNC4xNCwwLDIwLjY0LDkuMTcsMjAuNjQsMjguODZ2MTEuODVaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMTAwOS44NSwzMi4zOWgtMi44MnYtMS40M2g3LjQ1djEuNDNoLTIuOHMwLDgsMCw4aC0xLjgzdi04Wm01LjgyLTEuNDNoMS43NHMyLjgyLDUuNDMsMi44Miw1LjQzbDIuODItNS40M2gxLjcydjkuNDRoLTEuNzZ2LTYuMDlzLTIuMTgsNC4xOS0yLjE4LDQuMTloLTEuMTlzLTIuMTgtNC4xOS0yLjE4LTQuMTl2Ni4wOWgtMS43OXYtOS40NFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im05MDguMDUsMTEyLjE1Yy03LjY0LDExLjQ3LTE4LjkyLDE2LjgyLTM1LjE3LDE2LjgyLTI2Ljc2LDAtMzkuNzUtMTUuMS0zOS43NS00Ni4wNnYtNy4wN2MwLTMyLjQ5LDEyLjQyLTQ3Ljc4LDM5LjE4LTQ3Ljc4LDE2LjI1LDAsMjcuMTQsNS41NCwzMy44MywxNy4ybC0xNC41Myw4LjIyYy01LjM1LTcuMjYtOS43NS05Ljc1LTE3Ljk3LTkuNzUtMTQuMzMsMC0yMS4wMiw5LjU2LTIxLjAyLDMwLjU4djEwLjUxYzAsMTguNzMsNy4yNiwyOC40OCwyMS40MSwyOC40OCw4Ljc5LDAsMTQuNTMtMi44NywxOS40OS05LjU2bDE0LjUzLDguNDFaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtOTIyLjAxLDcxLjA2YzAtMjkuODIsMTIuNjEtNDMsNDEuMDktNDMsMjguMjksMCw0MC45LDEzLjE5LDQwLjksNDN2MTQuOTFjMCwyOS44Mi0xMi42MSw0My00MC45LDQzLTI4LjQ4LDAtNDEuMDktMTMuMTktNDEuMDktNDN2LTE0LjkxWm02Mi41LDEuMzRjMC0xOS44OC02LjUtMjguNjctMjEuNi0yOC42Ny0xNC45MSwwLTIxLjQxLDguNzktMjEuNDEsMjguNjd2MTIuMjNjMCwxOS44OCw2LjUsMjguNjcsMjEuNDEsMjguNjcsMTUuMSwwLDIxLjYtOC43OSwyMS42LTI4LjY3di0xMi4yM1oiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xNjUuODcsODRjLjAzLTEzLjI1LTMuMTQtMjYuNTItOS40OC0zOC41NC0xLjAyLTEuOTQtMy42OC0yLjI3LTUuMjMtLjcybC0xMS40MiwxMS40MnYuMDJzLS4wOS4xLS4wOS4xbC0xNy43NCwxNy43NC0uMDguMDh2LS4wM3MtMjMuOTMsMjMuOTItMjMuOTMsMjMuOTJsLS4zMy4zNmMtMy45NiwzLjk1LTkuMDUsNS45LTE0LjIzLDUuOTItLjY1LDAtMS4yOS0uMDMtMS45NC0uMDktMy42My0uMTMtNy44OS0yLjctMTAuNDItNC40Ny0xLjMyLS45Mi0zLjA5LS43Ni00LjIzLjM4bC05LjQ2LDkuNDZjLTEuMzUsMS4zNS0xLjMsMy41NS4xMyw0LjgxLDIuMTUsMS44OSw1LjM0LDQuMzksOC4zMyw1LjUxLDUuNTIsMi43MSwxMS41NCw0LjA2LDE3LjU0LDQuMDQsMTAuMTQsMCwyMC4zNy0zLjk0LDI4LjEyLTExLjdoMHMxLjI3LTEuMjcsMS4yNy0xLjI3bDMzLjEyLTMzLjEyLjExLS4xMWMuMjEsMi4xLjMyLDQuMjEuMzIsNi4zMi0uMDQsMTYuMTItNi4xOCwzMi4xNi0xOC41LDQ0LjQ4LTEyLjMyLDEyLjMyLTI4LjM2LDE4LjQ2LTQ0LjQ4LDE4LjUtMTIuMjYuMDItMjQuNDctMy41LTM1LjAxLTEwLjU4LTIuMDYtMS4zOC01LjI3LTQuMTMtNy40My02LjA0LTEuMzEtMS4xNi0zLjI5LTEuMDktNC41Mi4xNWwtOS4zMSw5LjMxYy0xLjMyLDEuMzItMS4zLDMuNDguMDcsNC43NSwxLjk2LDEuODMsNC43Nyw0LjMzLDcuMjIsNi4wNCwxNC40OSwxMC42OSwzMS43NCwxNi4wNCw0OC45NCwxNiwyMS4wOC0uMDMsNDIuMjYtOC4xNiw1OC4zOC0yNC4yOCwxNi4xMi0xNi4xMSwyNC4yNS0zNy4zLDI0LjI4LTU4LjM4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTk5LjI3LDY3LjU4bDkuNDEtOS40MWMxLjM5LTEuMzksMS4yNy0zLjY3LS4yNS00LjkxLTIuMS0xLjcxLTUuMjUtNC4wMi04LjkxLTUuODUtNS4zLTIuNDUtMTEuMDItMy42Ny0xNi43My0zLjY1LTEwLjE0LDAtMjAuMzcsMy45NC0yOC4xMiwxMS43bC0uNDUuNS0xLjI3LDEuMjctMzIuNjYsMzIuNjYtLjExLjExYy0uMjEtMi4xMS0uMzMtNC4yNC0uMzMtNi4zNi4wNC0xNi4xMiw2LjE4LTMyLjE2LDE4LjUtNDQuNDgsMTIuMzItMTIuMzIsMjguMzYtMTguNDYsNDQuNDgtMTguNSwxMi4wOS0uMDIsMjQuMTIsMy40LDM0LjU2LDEwLjI4LDMuMDUsMS44OSw1Ljk1LDQuMzgsNy44Nyw2LjE2LDEuMzEsMS4yMSwzLjMzLDEuMTgsNC42LS4wOGw5LjE5LTkuMTljMS4zNC0xLjM0LDEuMy0zLjUyLS4xMS00Ljc5LTEuNjgtMS41MS00LjE5LTMuNjgtNy40Ni02LjI1QzExNy4wNiw2LjIzLDk5Ljk0Ljk3LDgyLjg3LDEuMDFjLTIxLjA4LjAzLTQyLjI2LDguMTYtNTguMzgsMjQuMjhDOC4zOCw0MS40LjI1LDYyLjU5LjIyLDgzLjY2Yy0uMDMsMTMuMjMsMy4xMywyNi40OSw5LjQ2LDM4LjUsMS4wMiwxLjk0LDMuNjgsMi4yNyw1LjIzLjcybDQuMzMtNC4zMyw3LjEtNy4xLjEtLjEsMTcuNzQtMTcuNzQuMDgtLjA4LDI0LjI1LTI0LjI1aDBjMy45Ni0zLjk0LDkuMDUtNS44OSwxNC4yMy01LjkxLjM2LDAsLjczLDAsMS4wOS4wMywzLjk4LjExLDguNiwyLjc5LDExLjI2LDQuNTgsMS4zMS44OSwzLjA2LjcsNC4xNy0uNDFaIi8+PC9zdmc+" alt="partner.co">
+    <span class="event-tag">PXP26 Barcelona</span>
+  </div>
+  <h1>TOP 100 <span>PXP26</span></h1>
+  <div class="search-row">
+    <input class="search-box" type="text" id="searchInput" placeholder="🔍 Search name, rank, country, title..." oninput="filterCards()">
+    <select id="countryFilter" onchange="filterCards()">
+      <option value="">All Countries</option>
+    </select>
+  </div>
+  <div class="results-count" id="resultsCount"></div>
+  <div class="btn-row">
+    <button class="btn btn-mid" onclick="document.getElementById('bulkFileInput').click()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload all photos at once
+    </button>
+    <button class="btn btn-green" onclick="exportWithPhotos()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export with photos
+    </button>
+  </div>
+  <div class="status" id="statusMsg"></div>
+  <input type="file" id="bulkFileInput" accept="image/*" multiple onchange="handleBulkUpload(event)">
+</header>
+
+<div class="grid" id="cardGrid"><div class="loading-screen">Loading...</div></div>
+<input type="file" id="fileInput" accept="image/*" onchange="handleSingleUpload(event)">
+
+<script>
+const bps = [
+  {id:1,name:"Michelle Groote",title:"CHP2",country:"NLD",rank:1,notes:null},
+  {id:2,name:"Robin Hautvast",title:"Sr Supervisor",country:"NLD",rank:2,notes:"NO TICKET"},
+  {id:3,name:"Paolo Meucci",title:"CHP1",country:"CHE",rank:3,notes:null},
+  {id:4,name:"Isabel Rönnecke",title:"CHP1",country:"DEU",rank:4,notes:null},
+  {id:5,name:"Lorena Gabor",title:"CHP3",country:"ARE",rank:5,notes:null},
+  {id:6,name:"Bianca Plug",title:"President",country:"NLD",rank:6,notes:null},
+  {id:7,name:"Nadine Huber",title:"CEO",country:"CHE",rank:7,notes:null},
+  {id:8,name:"Giorgia Mottola",title:"CHP1",country:"ITA",rank:8,notes:null},
+  {id:9,name:"Masha Urbani",title:"CHP3",country:"ITA",rank:9,notes:null},
+  {id:10,name:"Delia Fratila",title:"Officer",country:"ROU",rank:10,notes:null},
+  {id:11,name:"Marcella Leone",title:"Sr Officer",country:"ITA",rank:11,notes:null},
+  {id:12,name:"Gerrica Caputo",title:"President",country:"ITA",rank:12,notes:null},
+  {id:13,name:"Ilaria Sulas & Francesco Pisoni",title:"CEO",country:"ITA",rank:13,notes:null},
+  {id:14,name:"Virna Salomoni",title:"CHP1",country:"ITA",rank:14,notes:null},
+  {id:15,name:"Vanille Wieczorkowski",title:"CHP7",country:"FRA",rank:15,notes:null},
+  {id:16,name:"Dorte Klattschou",title:"Officer",country:"DNK",rank:16,notes:"NO 100% COMPLIANT"},
+  {id:17,name:"Helen Blesa Martinez",title:"CHP2",country:"ESP",rank:17,notes:"NO TICKET"},
+  {id:18,name:"Stefano Orrù",title:"CEO",country:"ESP",rank:18,notes:null},
+  {id:19,name:"Jessica Jochum",title:"Officer",country:"DEU",rank:19,notes:null},
+  {id:20,name:"Serena Accai",title:"CEO",country:"CHE",rank:20,notes:null},
+  {id:21,name:"Miriam Casu",title:"CEO",country:"ITA",rank:21,notes:null},
+  {id:22,name:"Cristina Ciraci & Vito Semeraro",title:"CHP2",country:"ITA",rank:22,notes:null},
+  {id:23,name:"Michela Giugliano",title:"Sr Officer",country:"ITA",rank:23,notes:null},
+  {id:24,name:"Sarah Lischke",title:"Sr Officer",country:"DEU",rank:24,notes:null},
+  {id:25,name:"Edith Samambwa",title:"Sr Officer",country:"GBR",rank:25,notes:null},
+  {id:26,name:"Ancuta Gagea",title:"President",country:"ROU",rank:26,notes:"NO TICKET"},
+  {id:27,name:"Anouk Van Gelder",title:"Officer",country:"NLD",rank:27,notes:null},
+  {id:28,name:"Anna Perrella",title:"CEO",country:"ITA",rank:28,notes:null},
+  {id:29,name:"Agathe Levy",title:"CEO",country:"FRA",rank:29,notes:null},
+  {id:30,name:"Laura Weijland",title:"Officer",country:"NLD",rank:30,notes:null},
+  {id:31,name:"Stefania Giaccardi",title:"CHP1",country:"ITA",rank:31,notes:null},
+  {id:32,name:"Chiara Camerra",title:"CEO",country:"ITA",rank:32,notes:null},
+  {id:33,name:"Claudio Capozza",title:"Officer",country:"ITA",rank:33,notes:null},
+  {id:34,name:"Erika Poncato",title:"Officer",country:"DEU",rank:34,notes:null},
+  {id:35,name:"Angela Ambrosio",title:"CEO",country:"ITA",rank:35,notes:null},
+  {id:36,name:"Giulia Settembrino",title:"CEO",country:"ITA",rank:36,notes:null},
+  {id:37,name:"Irene Casillo",title:"CEO",country:"ITA",rank:37,notes:null},
+  {id:38,name:"Simona Cappelli",title:"CEO",country:"ITA",rank:38,notes:"NO TICKET"},
+  {id:40,name:"Els Goormans",title:"Officer",country:"NLD",rank:40,notes:null},
+  {id:41,name:"Julie Darbon",title:"CHP2",country:"FRA",rank:41,notes:null},
+  {id:42,name:"Giusy Scognamiglio",title:"Officer",country:"ITA",rank:42,notes:null},
+  {id:43,name:"Laura Censi",title:"Officer",country:"ITA",rank:43,notes:null},
+  {id:44,name:"Lorena Exposito Gomez",title:"Sr Officer",country:"ESP",rank:44,notes:"NO TICKET"},
+  {id:45,name:"Marko Rönnecke",title:"Officer",country:"DEU",rank:45,notes:"NO TICKET"},
+  {id:46,name:"Giada Pasi",title:"CEO",country:"ITA",rank:46,notes:"NO TICKET"},
+  {id:47,name:"Paola Scanu",title:"President",country:"ITA",rank:47,notes:null},
+  {id:48,name:"Luxmi Devi",title:"Officer",country:"GBR",rank:48,notes:null},
+  {id:49,name:"Ana Torres",title:"CEO",country:"ESP",rank:49,notes:null},
+  {id:50,name:"Maria Cristina Mustazza",title:"Officer",country:"ITA",rank:50,notes:null},
+  {id:51,name:"Miriam Loyo Ocio",title:"Officer",country:"ESP",rank:51,notes:null},
+  {id:52,name:"Elly Kok",title:"Sr Vice President",country:"NLD",rank:52,notes:"NO TICKET"},
+  {id:53,name:"Veronica Curzi",title:"Vice President",country:"ITA",rank:53,notes:"NO TICKET"},
+  {id:54,name:"Elisa Cappellini",title:"President",country:"ITA",rank:54,notes:null},
+  {id:55,name:"Tatiana Destandau",title:"CHP1",country:"FRA",rank:55,notes:null},
+  {id:56,name:"Veronica Calilli",title:"Vice President",country:"ITA",rank:56,notes:null},
+  {id:57,name:"Marie-Kristin Deul",title:"Officer",country:"DEU",rank:57,notes:null},
+  {id:58,name:"Elisabeth Fossheim",title:"Sr Vice President",country:"DNK",rank:58,notes:"NO TICKET"},
+  {id:59,name:"Simona Cirioni & Mauro Muzi",title:"CHP1",country:"ITA",rank:59,notes:"NO TICKET"},
+  {id:60,name:"Ronny Shuval Tesler",title:"Officer",country:"ISR",rank:60,notes:"NO TICKET"},
+  {id:61,name:"Elena San Martín Téllez",title:"Vice President",country:"ESP",rank:61,notes:null},
+  {id:62,name:"Andrea Einenkel",title:"Vice President",country:"DEU",rank:62,notes:null},
+  {id:63,name:"Florian Bogdan Stroie",title:"Manager",country:"ROU",rank:63,notes:"NO TICKET"},
+  {id:64,name:"Désirée Sirignano",title:"Sr Vice President",country:"CHE",rank:64,notes:"NO TICKET"},
+  {id:65,name:"Rosy Velasco",title:"Officer",country:"ITA",rank:65,notes:null},
+  {id:66,name:"Sara Gambone",title:"President",country:"ITA",rank:66,notes:"NO TICKET"},
+  {id:67,name:"Marta Garcia Catalan",title:"CEO",country:"ESP",rank:67,notes:"NO TICKET"},
+  {id:68,name:"Marie Billaux",title:"Vice President",country:"FRA",rank:68,notes:null},
+  {id:69,name:"Stefanie Knobel",title:"Vice President",country:"DEU",rank:69,notes:null},
+  {id:70,name:"Angela Accardo",title:"Officer",country:"ITA",rank:70,notes:"NO TICKET"},
+  {id:71,name:"Jessica Marchois",title:"Sr Officer",country:"FRA",rank:71,notes:"NO TICKET"},
+  {id:72,name:"Pamela Siozac",title:"Sr Vice President",country:"FRA",rank:72,notes:null},
+  {id:73,name:"Valentina De Gregorio",title:"Sr Officer",country:"ITA",rank:73,notes:"NO TICKET"},
+  {id:74,name:"Alessandra Giunta",title:"Officer",country:"ITA",rank:74,notes:null},
+  {id:75,name:"Giorgia Paparella",title:"Officer",country:"ITA",rank:75,notes:null},
+  {id:76,name:"Alessia Calierno",title:"Officer",country:"ITA",rank:76,notes:null},
+  {id:77,name:"Georgiana Miclea",title:"CHP4",country:"ROU",rank:77,notes:"NO TICKET"},
+  {id:78,name:"Sylvie Schnitzler",title:"Sr Officer",country:"FRA",rank:78,notes:null},
+  {id:79,name:"Angela Ruggiero",title:"Sr Officer",country:"ITA",rank:79,notes:null},
+  {id:80,name:"Delphine Jouandoudet",title:"CEO",country:"FRA",rank:80,notes:null},
+  {id:81,name:"Chiara Leone",title:"Sr Vice President",country:"ITA",rank:81,notes:null},
+  {id:82,name:"Massimiliano Sciarretta",title:"CEO",country:"ITA",rank:82,notes:null},
+  {id:83,name:"Concetta Catalano",title:"Sr Vice President",country:"ITA",rank:83,notes:null},
+  {id:84,name:"Antonella Caccavo",title:"CEO",country:"ITA",rank:84,notes:null},
+  {id:85,name:"Geetu Bhardwaj Sharma",title:"Officer",country:"ESP",rank:85,notes:null},
+  {id:86,name:"Janine Pfirter",title:"Officer",country:"CHE",rank:87,notes:null},
+  {id:87,name:"Gabriella Innocenti",title:"Officer",country:"CHE",rank:88,notes:null},
+  {id:88,name:"Rocio Pérez",title:"Vice President",country:"ESP",rank:89,notes:null},
+  {id:89,name:"Antje Thalheim",title:"Sr Director",country:"DEU",rank:90,notes:null},
+  {id:90,name:"Giulia Giordano",title:"CEO",country:"ITA",rank:91,notes:null},
+  {id:91,name:"Alessia Napolitano & Mario Antonelli",title:"CHP1",country:"ITA",rank:92,notes:null},
+  {id:92,name:"Tiziana Vecchi & Giovanni Mangano",title:"Officer",country:"ITA",rank:93,notes:null},
+  {id:93,name:"Alessia Brignola",title:"Officer",country:"ITA",rank:94,notes:null},
+  {id:94,name:"Séverine Cassiede & Grégory Pougis",title:"CHP3",country:"FRA",rank:95,notes:"NO TICKET"},
+  {id:95,name:"Tamara Sánchez Heredia",title:"Vice President",country:"ESP",rank:96,notes:"NO TICKET"},
+  {id:96,name:"Michelle Montisci",title:"CEO",country:"ITA",rank:97,notes:null},
+  {id:97,name:"Nerea Blanco Llopis",title:"Officer",country:"ESP",rank:98,notes:"NO TICKET"},
+  {id:98,name:"Jaspreet Kaur",title:"Officer",country:"ITA",rank:99,notes:null},
+  {id:99,name:"Anja Vanneste",title:"Officer",country:"NLD",rank:100,notes:null}
+];
+
+const countryNames = {
+  NLD:"🇳🇱 Netherlands", ITA:"🇮🇹 Italy", FRA:"🇫🇷 France", ESP:"🇪🇸 Spain",
+  DEU:"🇩🇪 Germany", CHE:"🇨🇭 Switzerland", GBR:"🇬🇧 United Kingdom",
+  ROU:"🇷🇴 Romania", DNK:"🇩🇰 Denmark", ISR:"🇮🇱 Israel", ARE:"🇦🇪 UAE"
+};
+
+// Photos stored directly in this object — gets exported with the file
+const embeddedPhotos = window.__embeddedPhotos || {};
+const embeddedBios = window.__embeddedBios || {};
+
+let currentUploadId = null;
+let filtered = [...bps];
+
+function setStatus(msg, duration = 3000) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  if (duration) setTimeout(() => el.textContent = '', duration);
+}
+
+function populateCountries() {
+  const sel = document.getElementById('countryFilter');
+  const countries = [...new Set(bps.map(b => b.country))].sort();
+  countries.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = countryNames[c] || c;
+    sel.appendChild(opt);
+  });
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const country = document.getElementById('countryFilter').value;
+  filtered = bps.filter(b => {
+    const isNumber = /^\d+$/.test(q);
+    const matchQ = !q || (isNumber ? String(b.rank) === q : (b.name.toLowerCase().includes(q) || b.title.toLowerCase().includes(q) || b.country.toLowerCase().includes(q)));
+    const matchC = !country || b.country === country;
+    return matchQ && matchC;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardGrid');
+  const total = filtered.length;
+  const withPhoto = filtered.filter(b => embeddedPhotos[b.id]).length;
+  document.getElementById('resultsCount').textContent = `${total} Brand Partners — ${withPhoto} with photo`;
+
+  if (total === 0) {
+    grid.innerHTML = `<div class="no-results"><p>No results found</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(bp => {
+    const photo = embeddedPhotos[bp.id];
+    const bio = embeddedBios[bp.id] || '';
+    const country = countryNames[bp.country] || bp.country;
+    return `
+    <div class="card">
+      <div class="card-photo-wrap">
+        ${photo ? `<img src="${photo}" alt="${bp.name}" />` : `<div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo yet</span></div>`}
+        <span class="rank-badge">#${bp.rank}</span>
+        <button class="upload-btn" onclick="triggerSingle(${bp.id},event)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          ${photo ? 'Change' : 'Upload'}
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${bp.name}</div>
+        <div class="card-title">${bp.title}</div>
+        <div class="card-country">${country}</div>
+        ${bio || bp.notes ? '<div class="divider"></div>' : ''}
+        ${bio ? `<div class="card-bio">${bio}</div>` : `<div class="no-bio" onclick="editBio(${bp.id},event)">+ Add bio</div>`}
+        ${bp.notes ? `<span class="note-badge">${bp.notes}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function resizeImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 600;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = h * MAX / w; w = MAX; } }
+      else { if (h > MAX) { w = w * MAX / h; h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.75));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function triggerSingle(id, e) {
+  e.stopPropagation();
+  currentUploadId = id;
+  document.getElementById('fileInput').click();
+}
+
+function handleSingleUpload(e) {
+  const file = e.target.files[0];
+  if (!file || !currentUploadId) return;
+  resizeImage(file, data => {
+    embeddedPhotos[currentUploadId] = data;
+    renderCards();
+    setStatus('✓ Photo saved — click Export with photos to keep it permanently');
+  });
+  e.target.value = '';
+}
+
+function normalizeName(str) {
+  return str.toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function handleBulkUpload(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  setStatus(`Processing ${files.length} photos... please wait`, 0);
+  
+  let processed = 0;
+  let matched = 0;
+  
+  // Process in batches of 50 to avoid freezing
+  function processBatch(startIdx) {
+    const batch = files.slice(startIdx, startIdx + 50);
+    let batchDone = 0;
+    
+    batch.forEach(file => {
+      const fileName = normalizeName(file.name.replace(/\.[^/.]+$/, ''));
+      const bp = bps.find(b => {
+        const bpNorm = normalizeName(b.name);
+        const firstWord = normalizeName(b.name.split(' ')[0]);
+        const lastName = normalizeName(b.name.split(' ').pop());
+        return fileName.includes(bpNorm) || bpNorm.includes(fileName) ||
+               (fileName.includes(firstWord) && fileName.includes(lastName));
+      });
+      
+      if (bp) {
+        resizeImage(file, data => {
+          embeddedPhotos[bp.id] = data;
+          matched++;
+          batchDone++;
+          processed++;
+          setStatus(`Processing... ${processed}/${files.length} done, ${matched} matched`, 0);
+          if (batchDone === batch.length && processed < files.length) {
+            setTimeout(() => processBatch(startIdx + 50), 100);
+          } else if (processed === files.length) {
+            renderCards();
+            setStatus(`Done! ${matched} photos matched out of ${files.length}. Click Export with photos to save.`);
+          }
+        });
+      } else {
+        batchDone++;
+        processed++;
+        setStatus(`Processing... ${processed}/${files.length} done, ${matched} matched`, 0);
+        if (batchDone === batch.length && processed < files.length) {
+          setTimeout(() => processBatch(startIdx + 50), 100);
+        } else if (processed === files.length) {
+          renderCards();
+          setStatus(`Done! ${matched} photos matched out of ${files.length}. Click Export with photos to save.`);
+        }
+      }
+    });
+  }
+  
+  processBatch(0);
+  e.target.value = '';
+}
+
+function editBio(id, e) {
+  e.stopPropagation();
+  const text = prompt('Add a short bio (3 lines max):');
+  if (text !== null) {
+    embeddedBios[id] = text;
+    renderCards();
+    setStatus('✓ Bio saved — click Export with photos to keep it permanently');
+  }
+}
+
+function exportWithPhotos() {
+  setStatus('Preparing export...', 0);
+  const photoData = JSON.stringify(embeddedPhotos);
+  const bioData = JSON.stringify(embeddedBios);
+  
+  let html = document.documentElement.outerHTML;
+  
+  // Inject the data
+  const injection = `<script>window.__embeddedPhotos = ${photoData}; window.__embeddedBios = ${bioData};<\/script>`;
+  html = html.replace('<head>', '<head>\n' + injection);
+  
+  const blob = new Blob([html], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'top100_pxp26_with_photos.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatus('✓ Exported! Upload top100_pxp26_with_photos.html to GitHub to update the link.');
+}
+
+populateCountries();
+filterCards();
+</script>
+</body>
+</html>
