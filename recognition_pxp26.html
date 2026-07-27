@@ -5,230 +5,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recognition PXP26 — Partner.co</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --green: #1a4a3a;
-    --green-mid: #2d7a5f;
-    --green-light: #3a9e78;
-    --gold: #c9a84c;
-    --white: #ffffff;
-    --off-white: #f4f8f6;
-    --border: #ddeee6;
-    --text: #111;
-    --text-mid: #444;
-    --text-light: #888;
-  }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; }
-
-  header {
-    background: var(--white);
-    border-bottom: 2px solid var(--border);
-    padding: 12px 16px;
-    position: sticky; top: 0; z-index: 200;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-  }
-  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .logo { height: 34px; width: auto; }
-  .event-tag { font-size: 11px; background: var(--green); color: var(--white); padding: 4px 12px; border-radius: 20px; font-weight: 700; }
-
-  .search-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .search-box { flex: 1; min-width: 160px; padding: 9px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; background: var(--white); color: var(--text); outline: none; }
-  .search-box:focus { border-color: var(--green-mid); }
-  select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--white); color: var(--text); outline: none; cursor: pointer; }
-
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-  .btn { border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-  .btn-green { background: var(--green); color: var(--white); }
-  .btn-green:hover { background: var(--green-mid); }
-  .btn-mid { background: var(--green-mid); color: var(--white); }
-  .btn-mid:hover { background: var(--green); }
-  .status { font-size: 11px; color: var(--green-mid); margin-top: 4px; font-weight: 600; min-height: 14px; }
-  .results-count { font-size: 12px; color: var(--text-light); margin-top: 3px; }
-
-  /* TABS */
-  .tabs-wrap { background: var(--white); border-bottom: 2px solid var(--border); padding: 0 16px; position: sticky; top: 0; z-index: 190; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-  .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tab { display: inline-block; padding: 10px 14px; font-size: 13px; font-weight: 700; color: var(--text-light); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
-  .tab.active { color: var(--green); border-bottom-color: var(--green); }
-  .tab:hover { color: var(--green-mid); }
-  .tab-badge { background: var(--off-white); color: var(--text-light); font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
-  .tab.active .tab-badge { background: var(--green); color: var(--white); }
-
-  /* TA SUBTABS */
-  .subtabs-wrap { background: var(--off-white); border-bottom: 1px solid var(--border); padding: 6px 16px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; display: none; }
-  .subtabs-wrap::-webkit-scrollbar { display: none; }
-  .subtabs-wrap.visible { display: block; }
-  .subtab { display: inline-block; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; border-radius: 20px; margin-right: 6px; transition: all 0.2s; }
-  .subtab.active { background: var(--green); color: var(--white); }
-  .subtab:hover { background: var(--border); color: var(--green); }
-
-  /* GRID */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; padding: 16px 14px; max-width: 1400px; margin: 0 auto; }
-
-  .card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1.5px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
-  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,74,58,0.13); }
-
-  .card-photo-wrap { width: 100%; height: 200px; position: relative; overflow: hidden; background: #e4f0ea; }
-  .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-  .photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #ddf0e8, #c8e4d8); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #7aaa92; }
-  .photo-placeholder svg { width: 44px; height: 44px; opacity: 0.45; }
-  .photo-placeholder span { font-size: 11px; font-weight: 600; }
-
-  .rank-badge { position: absolute; top: 10px; left: 10px; background: var(--green); color: var(--gold); font-size: 13px; font-weight: 900; padding: 4px 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.22); }
-  .upload-btn { position: absolute; bottom: 8px; right: 8px; background: var(--green); color: var(--white); border: none; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-  .upload-btn:hover { background: var(--green-mid); }
-
-  .card-body { padding: 11px 13px 13px; }
-  .card-name { font-size: 14px; font-weight: 800; margin-bottom: 3px; line-height: 1.25; color: var(--text); }
-  .card-title { font-size: 11px; color: var(--green); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .card-country { font-size: 13px; color: var(--text-mid); font-weight: 600; margin-bottom: 6px; }
-  .card-bio { font-size: 11px; color: #555; line-height: 1.5; margin-top: 4px; }
-  .bio-btn { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; background: var(--green); color: var(--white); padding: 4px 10px; border-radius: 7px; font-size: 10px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; }
-  .bio-btn:hover { background: var(--green-mid); }
-
-  .no-results { text-align: center; padding: 60px 20px; color: var(--text-light); grid-column: 1/-1; font-size: 15px; }
-  .loading-screen { text-align: center; padding: 40px; color: var(--green-mid); font-weight: 600; grid-column: 1/-1; }
-
-  /* MODAL */
-  .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; }
-  .modal-overlay.active { display:flex; }
-  .modal { background:var(--white); border-radius:20px; width:90%; max-width:480px; max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-  .modal-header { background:var(--green); color:var(--white); padding:18px 18px 14px; border-radius:20px 20px 0 0; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .modal-header h2 { font-size:17px; font-weight:800; line-height:1.3; }
-  .modal-title-sub { font-size:11px; color:var(--gold); font-weight:700; text-transform:uppercase; margin-top:3px; }
-  .modal-close { background:rgba(255,255,255,0.2); border:none; color:var(--white); width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .modal-close:hover { background:rgba(255,255,255,0.35); }
-  .modal-body { padding:18px; }
-  .modal-photo { width:100%; height:200px; object-fit:cover; object-position:top; border-radius:12px; margin-bottom:14px; }
-  .modal-photo-placeholder { width:100%; height:100px; background:linear-gradient(135deg,#ddf0e8,#c8e4d8); border-radius:12px; margin-bottom:14px; display:flex; align-items:center; justify-content:center; color:#7aaa92; font-size:12px; font-weight:600; }
-  .modal-bio { font-size:13px; line-height:1.7; color:#444; margin-bottom:14px; }
-  .modal-sp-btn { display:inline-flex; align-items:center; gap:6px; background:var(--green); color:var(--white); padding:8px 14px; border-radius:10px; font-size:12px; font-weight:700; text-decoration:none; }
-  .modal-sp-btn:hover { background:var(--green-mid); }
-  .modal-nav { display:flex; gap:8px; margin-top:12px; }
-  .modal-nav-btn { flex:1; background:var(--off-white); border:1.5px solid var(--border); color:var(--green); padding:7px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; text-align:center; }
-  .modal-nav-btn:hover { background:var(--border); }
-
-  input[type="file"] { display: none; }
-
-  @media (max-width: 480px) {
-    .grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-    .card-photo-wrap { height: 155px; }
-    .card-body { padding: 9px 10px 11px; }
-    .card-name { font-size: 13px; }
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #1a4a3a; --green-mid: #2d7a5f; --gold: #c9a84c;
+  --white: #ffffff; --off-white: #f4f8f6; --border: #ddeee6;
+  --text: #111; --text-mid: #444; --text-light: #888;
+}
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; }
+header { background: var(--white); border-bottom: 2px solid var(--border); padding: 12px 16px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.logo { height: 32px; width: auto; }
+.event-tag { font-size: 11px; background: var(--green); color: var(--white); padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+h1 { font-size: 16px; font-weight: 800; color: #111; margin-bottom: 8px; }
+h1 span { color: #2d7a5f; }
+.search-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.search-box { flex: 1; min-width: 160px; padding: 9px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; background: var(--white); color: var(--text); outline: none; }
+.search-box:focus { border-color: var(--green-mid); }
+select { padding: 9px 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--white); color: var(--text); outline: none; cursor: pointer; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.btn { border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+.btn-green { background: var(--green); color: var(--white); }
+.btn-green:hover { background: var(--green-mid); }
+.btn-mid { background: var(--green-mid); color: var(--white); }
+.btn-mid:hover { background: var(--green); }
+.status { font-size: 11px; color: var(--green-mid); margin-top: 4px; font-weight: 600; min-height: 14px; }
+.results-count { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+.tabs-wrap { background: var(--white); border-bottom: 2px solid var(--border); padding: 0 16px; position: sticky; top: 0; z-index: 190; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tab { display: inline-block; padding: 10px 14px; font-size: 13px; font-weight: 700; color: var(--text-light); cursor: pointer; border-bottom: 3px solid transparent; }
+.tab.active { color: var(--green); border-bottom-color: var(--green); }
+.tab:hover { color: var(--green-mid); }
+.tab-badge { background: var(--off-white); color: var(--text-light); font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
+.tab.active .tab-badge { background: var(--green); color: var(--white); }
+.subtabs-wrap { background: var(--off-white); border-bottom: 1px solid var(--border); padding: 6px 16px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; display: none; position: sticky; z-index: 180; }
+.subtabs-wrap::-webkit-scrollbar { display: none; }
+.subtabs-wrap.visible { display: block; }
+.subtab { display: inline-block; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; border-radius: 20px; margin-right: 6px; }
+.subtab.active { background: var(--green); color: var(--white); }
+.subtab:hover:not(.active) { background: var(--border); color: var(--green); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; padding: 14px 12px; max-width: 1400px; margin: 0 auto; }
+.card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1.5px solid var(--border); transition: transform 0.2s; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,74,58,0.13); }
+.card-photo-wrap { width: 100%; height: 190px; position: relative; overflow: hidden; background: #e4f0ea; }
+.card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.photo-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #ddf0e8, #c8e4d8); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #7aaa92; }
+.photo-placeholder svg { width: 40px; height: 40px; opacity: 0.45; }
+.photo-placeholder span { font-size: 11px; font-weight: 600; }
+.rank-badge { position: absolute; top: 8px; left: 8px; background: var(--green); color: var(--gold); font-size: 13px; font-weight: 900; padding: 3px 9px; border-radius: 10px; }
+.upload-btn { position: absolute; bottom: 8px; right: 8px; background: var(--green); color: var(--white); border: none; border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+.upload-btn:hover { background: var(--green-mid); }
+.card-body { padding: 10px 12px 12px; }
+.card-name { font-size: 13px; font-weight: 800; margin-bottom: 3px; line-height: 1.25; }
+.card-title { font-size: 11px; color: var(--green); font-weight: 700; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+.card-country { font-size: 18px; margin-bottom: 4px; }
+.view-bio { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; background: var(--green); color: var(--white); padding: 5px 11px; border-radius: 7px; font-size: 11px; font-weight: 700; text-decoration: none; }
+.view-bio:hover { background: var(--green-mid); }
+.no-results { text-align: center; padding: 60px 20px; color: var(--text-light); grid-column: 1/-1; }
+.loading-screen { text-align: center; padding: 40px; color: var(--green-mid); font-weight: 600; grid-column: 1/-1; }
+input[type="file"] { display: none; }
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+  .card-photo-wrap { height: 150px; }
+  .card-body { padding: 8px 10px 10px; }
+  .card-name { font-size: 12px; }
+}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-top">
     <img class="logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMaXZlX0NvbnRlbnQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMjUgMTY3Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzI5NTI0ZDt9PC9zdHlsZT48L2RlZnM+PGNpcmNsZSBjbGFzcz0iY2xzLTEiIGN4PSI4MDcuNjYiIGN5PSIxMTguMjQiIHI9IjEwLjAzIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMzY5Ljc4LDYzLjc5YzAtMTQuMTQtNS41NC0yMC4wNy0xOC45Mi0yMC4wNy04LjYsMC0xNS44NiwzLjI1LTIxLjQxLDkuNzVsLTEzLjM4LTkuOTRjOC42LTEwLjUxLDIwLjI2LTE1LjQ4LDM2LjY5LTE1LjQ4LDE2LjI1LDAsMjcuMzMsNS4xNiwzMi42OCwxNS4yOSwyLjg3LDUuMzUsMy44MiwxMS42NiwzLjgyLDIzLjd2NjAuMDFoLTE1LjQ4cy0xLjM0LTYuMzEtMS4zNC02LjMxYy02LjEyLDYuMTItMTMuMTksOC4yMi0yNy4zMyw4LjIyLTI0LjQ2LDAtMzMuNDUtNy44NC0zMy40NS0yOS42MiwwLTIyLjM2LDkuMTctMzAuMDEsMzYuNy0zMC4wMWgyMS40MXMwLTUuNTQsMC01LjU0Wm0tMTkuMywxOS4zYy0xNC43MiwwLTIwLjI2LDQuNC0yMC4yNiwxNS44NiwwLDExLjA5LDQuOTcsMTQuNzIsMTkuNjksMTQuNzIsOS4xNywwLDE0LjUzLTEuNzIsMTcuNTgtNS43MywxLjcyLTIuNDgsMi4yOS01LjE2LDIuMjktMTIuMjN2LTEyLjYxcy0xOS4zLDAtMTkuMywwWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTQxMy45MywyOS45N2gxNS4xczIuMSw4LjIyLDIuMSw4LjIyYzYuMTItNy40NSwxMS44NS0xMC4xMywyMS43OS0xMC4xMyw3LjA3LDAsMTIuNDIsMS41MywxOS42OSw1LjU0bC04LjQxLDE2LjI1Yy00Ljk3LTMuNjMtOC42LTQuOTctMTMuMTktNC45Ny0xMi40MiwwLTE3LjU4LDEwLjMyLTE3LjU4LDM0Ljk4djQ3LjIxaC0xOS41VjI5Ljk3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTU1Mi41LDI5Ljk3aDE0LjkxczEuNTMsOS43NSwxLjUzLDkuNzVjNi4xMi04LjIyLDEzLjc2LTExLjY2LDI2LjU3LTExLjY2LDE3LjAxLDAsMjcuOSw2LjMxLDMyLjQ5LDE4LjczLDEuOTEsNS41NCwyLjg3LDEzLDIuODcsMjQuNjZ2NTUuNjJoLTE5LjV2LTUzLjUyYzAtMjAuNjQtNS4zNS0yOC44Ni0xOS4xMS0yOC44Ni0xNC43MiwwLTIwLjI2LDguOTgtMjAuMjYsMzIuNjh2NDkuNjloLTE5LjQ5VjI5Ljk3WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTY2OS42Niw4Ni41NGMwLDE3LjU4LDguNDEsMjYuOTUsMjQuMDgsMjYuOTUsOS43NSwwLDE1Ljg2LTIuODcsMjEuMDItOS43NWwxNC41Myw4LjZjLTguMDMsMTEuODUtMTguOTIsMTYuNjMtMzcuNDYsMTYuNjMtMjguODYsMC00MS42Ni0xNC4xNC00MS42Ni00Ni4wNnYtNy40NWMwLTMzLjI2LDEyLjA0LTQ3LjQsNDAuNTItNDcuNCwyOC40OCwwLDQwLjUyLDE0LjE0LDQwLjUyLDQ3LjR2Ny42NWgtNjEuNTRzMCwzLjQ0LDAsMy40NFptNDMtMTcuMzl2LTEuOTFjMC0xNS42Ny03LjQ1LTI0LjA4LTIxLjQxLTI0LjA4LTguNzksMC0xNC4zMywyLjY4LTE3Ljc3LDguNi0yLjI5LDMuODItMy44Miw5Ljk0LTMuODIsMTUuNjd2MS43MnM0MywwLDQzLDBaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtNzUxLjY2LDI5Ljk3aDE1LjFzMi4xLDguMjIsMi4xLDguMjJjNi4xMi03LjQ1LDExLjg1LTEwLjEzLDIxLjc5LTEwLjEzLDcuMDcsMCwxMi40MiwxLjUzLDE5LjY5LDUuNTRsLTguNDEsMTYuMjVjLTQuOTctMy42My04LjYtNC45Ny0xMy4xOS00Ljk3LTEyLjQyLDAtMTcuNTgsMTAuMzItMTcuNTgsMzQuOTh2NDcuMjFoLTE5LjVWMjkuOTdaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtNTE0LjI3LDkyLjY1di00Ny4wMmgxOS4xMXMwLTE1LjY3LDAtMTUuNjdoLTE5LjExVi4zNHMtMTguNTQsMC0xOC41NCwwbC0uOTYsMjkuNjJoLTExLjI4czAsMTUuNjcsMCwxNS42N2gxMS4yOHY0NS4xYzAsMjkuNjIsNi41LDM2LjMxLDM1LjU1LDM2LjMxaDMuNDRzMC0xNi4wNSwwLTE2LjA1aC0zLjA2Yy0xMi42Mi4zOC0xNi40NC00LjItMTYuNDQtMTguMzVaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMjU3LjAxLDI4LjA1Yy0xMS44NSwwLTE5LjQ5LDIuNjgtMjYuNzYsOS4xN2wtMS45MS03LjI2aC0xNS4xczAsMTMxLjk4LDAsMTMxLjk4YzYuMDMsMy4zNSwxMi43OCw0LjksMTkuNSw0LjY5di00NS4zMmM2Ljg4LDUuMzUsMTQuMzMsNy42NSwyNC4yNyw3LjY1LDI1LjQyLDAsMzYuNS0xMy4xOSwzNi41LTQzLjE5di0xNC41M2MwLTMwLjAxLTExLjA5LTQzLjE5LTM2LjUtNDMuMTlabTE3LjIsNTYuMzhjMCwxOS42OS02LjUsMjguODYtMjAuNjQsMjguODYtMTMuOTUsMC0yMC44My04LjYtMjAuODMtMjUuOTl2LTE3LjU4YzAtMTcuMzksNi44OC0yNS45OSwyMC44My0yNS45OSwxNC4xNCwwLDIwLjY0LDkuMTcsMjAuNjQsMjguODZ2MTEuODVaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMTAwOS44NSwzMi4zOWgtMi44MnYtMS40M2g3LjQ1djEuNDNoLTIuOHMwLDgsMCw4aC0xLjgzdi04Wm01LjgyLTEuNDNoMS43NHMyLjgyLDUuNDMsMi44Miw1LjQzbDIuODItNS40M2gxLjcydjkuNDRoLTEuNzZ2LTYuMDlzLTIuMTgsNC4xOS0yLjE4LDQuMTloLTEuMTlzLTIuMTgtNC4xOS0yLjE4LTQuMTl2Ni4wOWgtMS43OXYtOS40NFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im05MDguMDUsMTEyLjE1Yy03LjY0LDExLjQ3LTE4LjkyLDE2LjgyLTM1LjE3LDE2LjgyLTI2Ljc2LDAtMzkuNzUtMTUuMS0zOS43NS00Ni4wNnYtNy4wN2MwLTMyLjQ5LDEyLjQyLTQ3Ljc4LDM5LjE4LTQ3Ljc4LDE2LjI1LDAsMjcuMTQsNS41NCwzMy44MywxNy4ybC0xNC41Myw4LjIyYy01LjM1LTcuMjYtOS43NS05Ljc1LTE3Ljk3LTkuNzUtMTQuMzMsMC0yMS4wMiw5LjU2LTIxLjAyLDMwLjU4djEwLjUxYzAsMTguNzMsNy4yNiwyOC40OCwyMS40MSwyOC40OCw4Ljc5LDAsMTQuNTMtMi44NywxOS40OS05LjU2bDE0LjUzLDguNDFaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtOTIyLjAxLDcxLjA2YzAtMjkuODIsMTIuNjEtNDMsNDEuMDktNDMsMjguMjksMCw0MC45LDEzLjE5LDQwLjksNDN2MTQuOTFjMCwyOS44Mi0xMi42MSw0My00MC45LDQzLTI4LjQ4LDAtNDEuMDktMTMuMTktNDEuMDktNDN2LTE0LjkxWm02Mi41LDEuMzRjMC0xOS44OC02LjUtMjguNjctMjEuNi0yOC42Ny0xNC45MSwwLTIxLjQxLDguNzktMjEuNDEsMjguNjd2MTIuMjNjMCwxOS44OCw2LjUsMjguNjcsMjEuNDEsMjguNjcsMTUuMSwwLDIxLjYtOC43OSwyMS42LTI4LjY3di0xMi4yM1oiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xNjUuODcsODRjLjAzLTEzLjI1LTMuMTQtMjYuNTItOS40OC0zOC41NC0xLjAyLTEuOTQtMy42OC0yLjI3LTUuMjMtLjcybC0xMS40MiwxMS40MnYuMDJzLS4wOS4xLS4wOS4xbC0xNy43NCwxNy43NC0uMDguMDh2LS4wM3MtMjMuOTMsMjMuOTItMjMuOTMsMjMuOTJsLS4zMy4zNmMtMy45NiwzLjk1LTkuMDUsNS45LTE0LjIzLDUuOTItLjY1LDAtMS4yOS0uMDMtMS45NC0uMDktMy42My0uMTMtNy44OS0yLjctMTAuNDItNC40Ny0xLjMyLS45Mi0zLjA5LS43Ni00LjIzLjM4bC05LjQ2LDkuNDZjLTEuMzUsMS4zNS0xLjMsMy41NS4xMyw0LjgxLDIuMTUsMS44OSw1LjM0LDQuMzksOC4zMyw1LjUxLDUuNTIsMi43MSwxMS41NCw0LjA2LDE3LjU0LDQuMDQsMTAuMTQsMCwyMC4zNy0zLjk0LDI4LjEyLTExLjdoMHMxLjI3LTEuMjcsMS4yNy0xLjI3bDMzLjEyLTMzLjEyLjExLS4xMWMuMjEsMi4xLjMyLDQuMjEuMzIsNi4zMi0uMDQsMTYuMTItNi4xOCwzMi4xNi0xOC41LDQ0LjQ4LTEyLjMyLDEyLjMyLTI4LjM2LDE4LjQ2LTQ0LjQ4LDE4LjUtMTIuMjYuMDItMjQuNDctMy41LTM1LjAxLTEwLjU4LTIuMDYtMS4zOC01LjI3LTQuMTMtNy40My02LjA0LTEuMzEtMS4xNi0zLjI5LTEuMDktNC41Mi4xNWwtOS4zMSw5LjMxYy0xLjMyLDEuMzItMS4zLDMuNDguMDcsNC43NSwxLjk2LDEuODMsNC43Nyw0LjMzLDcuMjIsNi4wNCwxNC40OSwxMC42OSwzMS43NCwxNi4wNCw0OC45NCwxNiwyMS4wOC0uMDMsNDIuMjYtOC4xNiw1OC4zOC0yNC4yOCwxNi4xMi0xNi4xMSwyNC4yNS0zNy4zLDI0LjI4LTU4LjM4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTk5LjI3LDY3LjU4bDkuNDEtOS40MWMxLjM5LTEuMzksMS4yNy0zLjY3LS4yNS00LjkxLTIuMS0xLjcxLTUuMjUtNC4wMi04LjkxLTUuODUtNS4zLTIuNDUtMTEuMDItMy42Ny0xNi43My0zLjY1LTEwLjE0LDAtMjAuMzcsMy45NC0yOC4xMiwxMS43bC0uNDUuNS0xLjI3LDEuMjctMzIuNjYsMzIuNjYtLjExLjExYy0uMjEtMi4xMS0uMzMtNC4yNC0uMzMtNi4zNi4wNC0xNi4xMiw2LjE4LTMyLjE2LDE4LjUtNDQuNDgsMTIuMzItMTIuMzIsMjguMzYtMTguNDYsNDQuNDgtMTguNSwxMi4wOS0uMDIsMjQuMTIsMy40LDM0LjU2LDEwLjI4LDMuMDUsMS44OSw1Ljk1LDQuMzgsNy44Nyw2LjE2LDEuMzEsMS4yMSwzLjMzLDEuMTgsNC42LS4wOGw5LjE5LTkuMTljMS4zNC0xLjM0LDEuMy0zLjUyLS4xMS00Ljc5LTEuNjgtMS41MS00LjE5LTMuNjgtNy40Ni02LjI1QzExNy4wNiw2LjIzLDk5Ljk0Ljk3LDgyLjg3LDEuMDFjLTIxLjA4LjAzLTQyLjI2LDguMTYtNTguMzgsMjQuMjhDOC4zOCw0MS40LjI1LDYyLjU5LjIyLDgzLjY2Yy0uMDMsMTMuMjMsMy4xMywyNi40OSw5LjQ2LDM4LjUsMS4wMiwxLjk0LDMuNjgsMi4yNyw1LjIzLjcybDQuMzMtNC4zMyw3LjEtNy4xLjEtLjEsMTcuNzQtMTcuNzQuMDgtLjA4LDI0LjI1LTI0LjI1aDBjMy45Ni0zLjk0LDkuMDUtNS44OSwxNC4yMy01LjkxLjM2LDAsLjczLDAsMS4wOS4wMywzLjk4LjExLDguNiwyLjc5LDExLjI2LDQuNTgsMS4zMS44OSwzLjA2LjcsNC4xNy0uNDFaIi8+PC9zdmc+" alt="partner.co">
     <span class="event-tag">PXP26 Barcelona</span>
   </div>
-  <h1 style="font-size:16px;font-weight:800;color:#111;margin-bottom:8px;">Recognition <span style="color:#2d7a5f;">PXP26</span></h1>
+  <h1>Recognition <span>PXP26</span></h1>
   <div class="search-row">
-    <input class="search-box" type="text" id="searchInput" placeholder="🔍 Search name, rank, country..." oninput="filterCards()">
+    <input class="search-box" type="text" id="searchInput" placeholder="Search name, rank, country..." oninput="filterCards()">
     <select id="countryFilter" onchange="filterCards()"><option value="">All Countries</option></select>
   </div>
   <div class="results-count" id="resultsCount"></div>
   <div class="btn-row">
-    <button class="btn btn-mid" onclick="document.getElementById('bulkFileInput').click()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Upload all photos
-    </button>
-    <button class="btn btn-green" onclick="exportWithPhotos()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export with photos
-    </button>
+    <button class="btn btn-mid" onclick="document.getElementById('bulkFileInput').click()">Upload all photos</button>
+    <button class="btn btn-green" onclick="exportWithPhotos()">Export with photos</button>
   </div>
   <div class="status" id="statusMsg"></div>
   <input type="file" id="bulkFileInput" accept="image/*" multiple onchange="handleBulkUpload(event)">
 </header>
-
 <div class="tabs-wrap" id="tabsWrap"></div>
 <div class="subtabs-wrap" id="subtabsWrap"></div>
-
 <div class="grid" id="cardGrid"><div class="loading-screen">Loading...</div></div>
 <input type="file" id="fileInput" accept="image/*" onchange="handleSingleUpload(event)">
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modalBox">
-    <div class="modal-header">
-      <div>
-        <h2 id="modalName"></h2>
-        <div class="modal-title-sub" id="modalSub"></div>
-      </div>
-      <button class="modal-close" onclick="closeModalDirect()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="modalPhotoWrap"></div>
-      <div class="modal-bio" id="modalBio"></div>
-      <a id="modalSpBtn" href="#" target="_blank" class="modal-sp-btn" style="display:none;">View full profile</a>
-      <div class="modal-nav">
-        <button class="modal-nav-btn" onclick="navigateModal(-1)">← Prev</button>
-        <button class="modal-nav-btn" onclick="navigateModal(1)">Next →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-const countryNames = {
-  NLD:"🇳🇱 NL", ITA:"🇮🇹 IT", FRA:"🇫🇷 FR", ESP:"🇪🇸 ES",
-  DEU:"🇩🇪 DE", CHE:"🇨🇭 CH", GBR:"🇬🇧 UK", ROU:"🇷🇴 RO",
-  DNK:"🇩🇰 DK", ISR:"🇮🇱 IL", ARE:"🇦🇪 AE", NOR:"🇳🇴 NO",
-  SWE:"🇸🇪 SE", BEL:"🇧🇪 BE", PRT:"🇵🇹 PT", AUT:"🇦🇹 AT",
-  POL:"🇵🇱 PL", HUN:"🇭🇺 HU", CZE:"🇨🇿 CZ", HRV:"🇭🇷 HR",
-  SRB:"🇷🇸 RS", BGR:"🇧🇬 BG", GRC:"🇬🇷 GR", TUR:"🇹🇷 TR",
-  MDA:"🇲🇩 MD", UKR:"🇺🇦 UA", LTU:"🇱🇹 LT", LVA:"🇱🇻 LV",
-  EST:"🇪🇪 EE", FIN:"🇫🇮 FI", IRL:"🇮🇪 IE", MLT:"🇲🇹 MT",
-  LUX:"🇱🇺 LU", USA:"🇺🇸 US", MEX:"🇲🇽 MX", COL:"🇨🇴 CO",
-  CHL:"🇨🇱 CL", ARG:"🇦🇷 AR", PER:"🇵🇪 PE", ZAF:"🇿🇦 ZA",
-  AUS:"🇦🇺 AU", SGP:"🇸🇬 SG", IND:"🇮🇳 IN", FRANCE:"🇫🇷 FR",
-  SPAIN:"🇪🇸 ES", ITALY:"🇮🇹 IT", GERMANY:"🇩🇪 DE",
-  NETHERLANDS:"🇳🇱 NL", SWITZERLAND:"🇨🇭 CH", ROMANIA:"🇷🇴 RO",
-  UK:"🇬🇧 UK", DENMARK:"🇩🇰 DK", ISRAEL:"🇮🇱 IL", UAE:"🇦🇪 AE",
-  ROE:"🌍 EU", Italy:"🇮🇹 IT", Spain:"🇪🇸 ES", France:"🇫🇷 FR",
-  Germany:"🇩🇪 DE", Netherlands:"🇳🇱 NL", Switzerland:"🇨🇭 CH",
-  Romania:"🇷🇴 RO", "United Kingdom":"🇬🇧 UK", Denmark:"🇩🇰 DK",
-  Israel:"🇮🇱 IL"
+var top100Data = [{"id": 1, "name": "Michelle Groote", "title": "CHP2", "country": "NLD", "rank": 1}, {"id": 2, "name": "Robin Hautvast", "title": "Sr Supervisor", "country": "NLD", "rank": 2}, {"id": 3, "name": "Paolo Meucci", "title": "CHP1", "country": "CHE", "rank": 3}, {"id": 4, "name": "Isabel Rönnecke", "title": "CHP1", "country": "DEU", "rank": 4}, {"id": 5, "name": "Lorena Gabor", "title": "CHP3", "country": "ARE", "rank": 5}, {"id": 6, "name": "Bianca Plug", "title": "President", "country": "NLD", "rank": 6}, {"id": 7, "name": "Nadine Huber", "title": "CEO", "country": "CHE", "rank": 7}, {"id": 8, "name": "Giorgia Mottola", "title": "CHP1", "country": "ITA", "rank": 8}, {"id": 9, "name": "Masha Urbani", "title": "CHP3", "country": "ITA", "rank": 9}, {"id": 10, "name": "Delia Fratila", "title": "Officer", "country": "ROU", "rank": 10}, {"id": 11, "name": "Marcella Leone", "title": "Sr Officer", "country": "ITA", "rank": 11}, {"id": 12, "name": "Gerrica Caputo", "title": "President", "country": "ITA", "rank": 12}, {"id": 13, "name": "Ilaria Sulas & Francesco Pisoni", "title": "CEO", "country": "ITA", "rank": 13}, {"id": 14, "name": "Virna Salomoni", "title": "CHP1", "country": "ITA", "rank": 14}, {"id": 15, "name": "Vanille Wieczorkowski", "title": "CHP7", "country": "FRA", "rank": 15}, {"id": 16, "name": "Dorte Klattschou", "title": "Officer", "country": "DNK", "rank": 16}, {"id": 17, "name": "Helen Blesa Martínez", "title": "CHP2", "country": "ESP", "rank": 17}, {"id": 18, "name": "Stefano Orrù", "title": "CEO", "country": "ESP", "rank": 18}, {"id": 19, "name": "Jessica Jochum", "title": "Officer", "country": "DEU", "rank": 19}, {"id": 20, "name": "Serena Accai", "title": "CEO", "country": "CHE", "rank": 20}, {"id": 21, "name": "Miriam Casu", "title": "CEO", "country": "ITA", "rank": 21}, {"id": 22, "name": "Cristina Ciraci & Vito Semeraro", "title": "CHP2", "country": "ITA", "rank": 22}, {"id": 23, "name": "Michela Giugliano", "title": "Sr Officer", "country": "ITA", "rank": 23}, {"id": 24, "name": "Sarah Lischke", "title": "Sr Officer", "country": "DEU", "rank": 24}, {"id": 25, "name": "Edith Samambwa", "title": "Sr Officer", "country": "GBR", "rank": 25}, {"id": 26, "name": "Ancuta Gagea", "title": "President", "country": "ROU", "rank": 26}, {"id": 27, "name": "Anouk Van Gelder", "title": "Officer", "country": "NLD", "rank": 27}, {"id": 28, "name": "Anna Perrella", "title": "CEO", "country": "ITA", "rank": 28}, {"id": 29, "name": "Agathe Levy", "title": "CEO", "country": "FRA", "rank": 29}, {"id": 30, "name": "Laura Weijland", "title": "Officer", "country": "NLD", "rank": 30}, {"id": 31, "name": "Stefania Giaccardi", "title": "CHP1", "country": "ITA", "rank": 31}, {"id": 32, "name": "Chiara Camerra", "title": "CEO", "country": "ITA", "rank": 32}, {"id": 33, "name": "Claudio Capozza", "title": "Officer", "country": "ITA", "rank": 33}, {"id": 34, "name": "Erika Poncato", "title": "Officer", "country": "DEU", "rank": 34}, {"id": 35, "name": "Angela Ambrosio", "title": "CEO", "country": "ITA", "rank": 35}, {"id": 36, "name": "Giulia Settembrino", "title": "CEO", "country": "ITA", "rank": 36}, {"id": 37, "name": "Irene Casillo", "title": "CEO", "country": "ITA", "rank": 37}, {"id": 38, "name": "Simona Cappelli", "title": "CEO", "country": "ITA", "rank": 38}, {"id": 40, "name": "Els Goormans", "title": "Officer", "country": "NLD", "rank": 40}, {"id": 41, "name": "Julie Darbon", "title": "CHP2", "country": "FRA", "rank": 41}, {"id": 42, "name": "Giusy Scognamiglio", "title": "Officer", "country": "ITA", "rank": 42}, {"id": 43, "name": "Laura Censi", "title": "Officer", "country": "ITA", "rank": 43}, {"id": 44, "name": "Lorena Expósito Gómez", "title": "Sr Officer", "country": "ESP", "rank": 44}, {"id": 45, "name": "Marko Rönnecke", "title": "Officer", "country": "DEU", "rank": 45}, {"id": 46, "name": "Giada Pasi", "title": "CEO", "country": "ITA", "rank": 46}, {"id": 47, "name": "Paola Scanu", "title": "President", "country": "ITA", "rank": 47}, {"id": 48, "name": "Luxmi Devi", "title": "Officer", "country": "GBR", "rank": 48}, {"id": 49, "name": "Ana Torres", "title": "CEO", "country": "ESP", "rank": 49}, {"id": 50, "name": "Maria Cristina Mustazza", "title": "Officer", "country": "ITA", "rank": 50}, {"id": 51, "name": "Miriam Loyo Ocio", "title": "Officer", "country": "ESP", "rank": 51}, {"id": 52, "name": "Elly Kok", "title": "Sr Vice President", "country": "NLD", "rank": 52}, {"id": 53, "name": "Veronica Curzi", "title": "Vice President", "country": "ITA", "rank": 53}, {"id": 54, "name": "Elisa Cappellini", "title": "President", "country": "ITA", "rank": 54}, {"id": 55, "name": "Tatiana Destandau", "title": "CHP1", "country": "FRA", "rank": 55}, {"id": 56, "name": "Veronica Calilli", "title": "Vice President", "country": "ITA", "rank": 56}, {"id": 57, "name": "Marie-Kristin Deul", "title": "Officer", "country": "DEU", "rank": 57}, {"id": 58, "name": "Elisabeth Fossheim", "title": "Sr Vice President", "country": "DNK", "rank": 58}, {"id": 59, "name": "Simona Cirioni & Mauro Muzi", "title": "CHP1", "country": "ITA", "rank": 59}, {"id": 60, "name": "Ronny Shuval Tesler", "title": "Officer", "country": "ISR", "rank": 60}, {"id": 61, "name": "Elena San Martín Téllez", "title": "Vice President", "country": "ESP", "rank": 61}, {"id": 62, "name": "Andrea Einenkel", "title": "Vice President", "country": "DEU", "rank": 62}, {"id": 63, "name": "Florin Bogdan Murgu", "title": "Manager", "country": "ROU", "rank": 63}, {"id": 64, "name": "Désirée Sirignano", "title": "Sr Vice President", "country": "CHE", "rank": 64}, {"id": 65, "name": "Rosy Velasco", "title": "Officer", "country": "ITA", "rank": 65}, {"id": 66, "name": "Sara Gambone", "title": "President", "country": "ITA", "rank": 66}, {"id": 67, "name": "Marta Garcia Catalan", "title": "CEO", "country": "ESP", "rank": 67}, {"id": 68, "name": "Marie Billaux", "title": "Vice President", "country": "FRA", "rank": 68}, {"id": 69, "name": "Stefanie Knobel", "title": "Vice President", "country": "DEU", "rank": 69}, {"id": 70, "name": "Angela Accardo", "title": "Officer", "country": "ITA", "rank": 70}, {"id": 71, "name": "Jessica Marchois", "title": "Sr Officer", "country": "FRA", "rank": 71}, {"id": 72, "name": "Pamela Siozac", "title": "Sr Vice President", "country": "FRA", "rank": 72}, {"id": 73, "name": "Valentina De Gregorio", "title": "Sr Officer", "country": "ITA", "rank": 73}, {"id": 74, "name": "Alessandra Giunta", "title": "Officer", "country": "ITA", "rank": 74}, {"id": 75, "name": "Giorgia Paparella", "title": "Officer", "country": "ITA", "rank": 75}, {"id": 76, "name": "Alessia Calierno", "title": "Officer", "country": "ITA", "rank": 76}, {"id": 77, "name": "Georgiana Miclea", "title": "CHP4", "country": "ROU", "rank": 77}, {"id": 78, "name": "Sylvie Schnitzler", "title": "Sr Officer", "country": "FRA", "rank": 78}, {"id": 79, "name": "Angela Ruggiero", "title": "Sr Officer", "country": "ITA", "rank": 79}, {"id": 80, "name": "Delphine Jouandoudet", "title": "CEO", "country": "FRA", "rank": 80}, {"id": 81, "name": "Chiara Leone", "title": "Sr Vice President", "country": "ITA", "rank": 81}, {"id": 82, "name": "Massimiliano Sciarretta", "title": "CEO", "country": "ITA", "rank": 82}, {"id": 83, "name": "Concetta Catalano", "title": "Sr Vice President", "country": "ITA", "rank": 83}, {"id": 84, "name": "Antonella Caccavo", "title": "CEO", "country": "ITA", "rank": 84}, {"id": 85, "name": "Geetu Bhardwaj Sharma", "title": "Officer", "country": "ESP", "rank": 85}, {"id": 86, "name": "Janine Pfirter", "title": "Officer", "country": "CHE", "rank": 87}, {"id": 87, "name": "Gabriella Innocenti", "title": "Officer", "country": "CHE", "rank": 88}, {"id": 88, "name": "Rocio Pérez", "title": "Vice President", "country": "ESP", "rank": 89}, {"id": 89, "name": "Antje Thalheim", "title": "Sr Director", "country": "DEU", "rank": 90}, {"id": 90, "name": "Giulia Giordano", "title": "CEO", "country": "ITA", "rank": 91}, {"id": 91, "name": "Alessia Napolitano & Mario Antonelli", "title": "CHP1", "country": "ITA", "rank": 92}, {"id": 92, "name": "Tiziana Vecchi & Giovanni Mangano", "title": "Officer", "country": "ITA", "rank": 93}, {"id": 93, "name": "Alessia Brignola", "title": "Officer", "country": "ITA", "rank": 94}, {"id": 94, "name": "Séverine Cassiede & Grégory Pougis", "title": "CHP3", "country": "FRA", "rank": 95}, {"id": 95, "name": "Tamara Sánchez Heredia", "title": "Vice President", "country": "ESP", "rank": 96}, {"id": 96, "name": "Michelle Montisci", "title": "CEO", "country": "ITA", "rank": 97}, {"id": 97, "name": "Nerea Blanco Llopis", "title": "Officer", "country": "ESP", "rank": 98}, {"id": 98, "name": "Jaspreet Kaur", "title": "Officer", "country": "ITA", "rank": 99}, {"id": 99, "name": "Anja Vanneste", "title": "Officer", "country": "NLD", "rank": 100}];
+var recData = {"Saving Bonus": [{"id": "sb_9", "name": "Alessandra Filoramo", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_6", "name": "Angela Ruggiero", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_15", "name": "Anna Soave & Fanuel Spezia", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_14", "name": "Antonio Caldarelli", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_1", "name": "Bernadette King-Turner", "title": "Saving Bonus", "country": "ARE"}, {"id": "sb_10", "name": "Elettra Moro", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_11", "name": "Elisa Cappellini", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_7", "name": "Elisa Federico", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_13", "name": "Laura Maddaluno", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_5", "name": "Melissa Consonni", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_16", "name": "Michelle Groote", "title": "Saving Bonus", "country": "NLD"}, {"id": "sb_4", "name": "Nancy Amiel", "title": "Saving Bonus", "country": "FRA"}, {"id": "sb_12", "name": "Pamela Zullino", "title": "Saving Bonus", "country": "ITA"}, {"id": "sb_2", "name": "Carine Cantet", "title": "Almost there — SB pending", "country": "FRA"}, {"id": "sb_3", "name": "Laurie Granger", "title": "Almost there — SB pending", "country": "FRA"}, {"id": "sb_17", "name": "Sarah Abate", "title": "Almost there — SB pending", "country": "ITA"}, {"id": "sb_8", "name": "Sharon Chiominto", "title": "Almost there — SB pending", "country": "ITA"}], "MDC": [{"id": "mdc_1", "name": "Julie Darbon", "title": "3MDC", "country": "FRANCE"}, {"id": "mdc_2", "name": "Helen Blesa Martínez", "title": "2MDC", "country": "SPAIN"}, {"id": "mdc_4", "name": "Alessia Napolitano & Mario Antonelli", "title": "1MDC", "country": "ITALY"}, {"id": "mdc_6", "name": "Delphine Jouandoudet", "title": "1MDC", "country": "FRANCE"}, {"id": "mdc_5", "name": "Simona Moretti", "title": "1MDC", "country": "ITALY"}, {"id": "mdc_3", "name": "Veronica Carbonaro", "title": "1MDC", "country": "ITALY"}, {"id": "mdc_8", "name": "Stefano Orrù", "title": "Projected 4MDC", "country": "SPAIN"}, {"id": "mdc_9", "name": "Ilaria Sulas & Francesco Pisoni", "title": "Projected 2MDC", "country": "ITALY"}, {"id": "mdc_7", "name": "Cristina Ciraci & Vito Semeraro", "title": "Projected 1MDC", "country": "ITALY"}], "CHP3": [{"id": "ta_CHP3_1", "name": "Lorena Gabor", "title": "CHP3", "country": "United Arab Emirates"}], "CHP2": [{"id": "ta_CHP2_1", "name": "Michelle Groote", "title": "CHP2", "country": "Netherlands"}], "CHP1": [{"id": "ta_CHP1_1", "name": "Giorgia Mottola", "title": "CHP1", "country": "Italy"}, {"id": "ta_CHP1_2", "name": "Isabel Rönnecke", "title": "CHP1", "country": "Germany"}, {"id": "ta_CHP1_3", "name": "Paolo Meucci", "title": "CHP1", "country": "Switzerland"}, {"id": "ta_CHP1_4", "name": "Virna Salomoni", "title": "CHP1", "country": "Italy"}], "CEO": [{"id": "ta_CEO_1", "name": "Irene Casillo", "title": "CEO", "country": "Italy"}, {"id": "ta_CEO_2", "name": "Laura Heinen", "title": "CEO", "country": "Belgium"}, {"id": "ta_CEO_3", "name": "Nadine Huber", "title": "CEO", "country": "Switzerland"}], "President": [{"id": "ta_President_1", "name": "Ancuta Gagea", "title": "President", "country": "Romania"}, {"id": "ta_President_2", "name": "Bianca Plug", "title": "President", "country": "Netherlands"}, {"id": "ta_President_3", "name": "Elisa Cappellini", "title": "President", "country": "Italy"}, {"id": "ta_President_4", "name": "Erika Zizzi", "title": "President", "country": "Italy"}, {"id": "ta_President_5", "name": "Riccardo Corallo", "title": "President", "country": "Italy"}], "Sr Officer": [{"id": "ta_SrOfficer_1", "name": "Edith Samambwa", "title": "Sr Officer", "country": "United Kingdom"}, {"id": "ta_SrOfficer_3", "name": "Lorena Expósito Gómez", "title": "Sr Officer", "country": "Spain"}, {"id": "ta_SrOfficer_4", "name": "Marcella Leone", "title": "Sr Officer", "country": "Italy"}, {"id": "ta_SrOfficer_5", "name": "Michela Giugliano", "title": "Sr Officer", "country": "Italy"}, {"id": "ta_SrOfficer_6", "name": "Sarah Lischke", "title": "Sr Officer", "country": "Germany"}, {"id": "ta_SrOfficer_7", "name": "Sharon Chiominto", "title": "Sr Officer", "country": "Italy"}, {"id": "ta_SrOfficer_8", "name": "Sylvie Schnitzler", "title": "Sr Officer", "country": "France"}], "Officer": [{"id": "ta_Officer_1", "name": "Alessandra Giunta", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_2", "name": "Alessia Brignola", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_3", "name": "Alessia Calierno", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_4", "name": "Angela Accardo", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_5", "name": "Anouk Van Gelder", "title": "Officer", "country": "Netherlands"}, {"id": "ta_Officer_6", "name": "Carmen Ancuta Sandu", "title": "Officer", "country": "Romania"}, {"id": "ta_Officer_7", "name": "Carmen Maria Garcia Rodrigo", "title": "Officer", "country": "Germany"}, {"id": "ta_Officer_8", "name": "Daniela Scoccimarro", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_9", "name": "Delia Fratila", "title": "Officer", "country": "Romania"}, {"id": "ta_Officer_10", "name": "Dorte Klattschou", "title": "Officer", "country": "Denmark"}, {"id": "ta_Officer_11", "name": "Elisabetta Dolce", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_12", "name": "Els Goormans", "title": "Officer", "country": "Netherlands"}, {"id": "ta_Officer_13", "name": "Erika Poncato", "title": "Officer", "country": "Germany"}, {"id": "ta_Officer_14", "name": "Francis Fontijne-Nobbe", "title": "Officer", "country": "Switzerland"}, {"id": "ta_Officer_15", "name": "Gabriella Innocenti", "title": "Officer", "country": "Switzerland"}, {"id": "ta_Officer_16", "name": "Geetu Bhardwaj Sharma", "title": "Officer", "country": "Spain"}, {"id": "ta_Officer_17", "name": "Giorgia Paparella", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_18", "name": "Giuliana Lomuscio", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_19", "name": "Giusy Scognamiglio", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_21", "name": "Janine Pfirter", "title": "Officer", "country": "Switzerland"}, {"id": "ta_Officer_22", "name": "Jaspreet Kaur", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_23", "name": "Jennifer Frank", "title": "Officer", "country": "Switzerland"}, {"id": "ta_Officer_24", "name": "Jessica Jochum", "title": "Officer", "country": "Germany"}, {"id": "ta_Officer_25", "name": "Jody Mohr", "title": "Officer", "country": "Belgium"}, {"id": "ta_Officer_26", "name": "Julie Lemmel Schaeffler", "title": "Officer", "country": "France"}, {"id": "ta_Officer_27", "name": "Laura Weijland", "title": "Officer", "country": "Netherlands"}, {"id": "ta_Officer_28", "name": "Ludovic Darnaud", "title": "Officer", "country": "France"}, {"id": "ta_Officer_29", "name": "Luxmi Devi", "title": "Officer", "country": "United Kingdom"}, {"id": "ta_Officer_30", "name": "Maria Cristina Mustazza", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_31", "name": "Marie Lourenco", "title": "Officer", "country": "France"}, {"id": "ta_Officer_32", "name": "Marie-Kristin Deul", "title": "Officer", "country": "Germany"}, {"id": "ta_Officer_33", "name": "Marika Amici", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_34", "name": "Marko Rönnecke", "title": "Officer", "country": "Germany"}, {"id": "ta_Officer_35", "name": "Miriam Loyo Ocio", "title": "Officer", "country": "Spain"}, {"id": "ta_Officer_36", "name": "Nerea Blanco Llopis", "title": "Officer", "country": "Spain"}, {"id": "ta_Officer_37", "name": "Rosy Velasco", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_38", "name": "Simona Luzzana", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_39", "name": "Stefania Bresciani", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_40", "name": "Sudha Shrestha", "title": "Officer", "country": "United Kingdom"}, {"id": "ta_Officer_41", "name": "Veronica Ambrosio", "title": "Officer", "country": "Italy"}, {"id": "ta_Officer_42", "name": "Virginie Cannistra", "title": "Officer", "country": "Switzerland"}], "Sr Vice President": [{"id": "ta_SrVicePresident_1", "name": "Alessandra Lo Rosso", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_2", "name": "Alice Garzoni", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_3", "name": "Annalisa Delli Paoli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_4", "name": "Antu Bracher", "title": "Sr Vice President", "country": "Switzerland"}, {"id": "ta_SrVicePresident_5", "name": "Audrey Batut", "title": "Sr Vice President", "country": "France"}, {"id": "ta_SrVicePresident_6", "name": "Chiara Avanti", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_7", "name": "Chiara Leone", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_8", "name": "Cindy Vroomen", "title": "Sr Vice President", "country": "Netherlands"}, {"id": "ta_SrVicePresident_9", "name": "Concetta Catalano", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_10", "name": "Cristina Suárez Sánchez", "title": "Sr Vice President", "country": "Spain"}, {"id": "ta_SrVicePresident_11", "name": "Désirée Sirignano", "title": "Sr Vice President", "country": "Switzerland"}, {"id": "ta_SrVicePresident_12", "name": "Elly Kok", "title": "Sr Vice President", "country": "Netherlands"}, {"id": "ta_SrVicePresident_13", "name": "Francesca  Martinelli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_14", "name": "Francesca Mapelli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_15", "name": "Gaia Napoli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_16", "name": "Giovanna Di Luggo", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_17", "name": "Giovanna Pacilli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_18", "name": "Giulia Chiovenda", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_19", "name": "Laila Cinti", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_20", "name": "Maddalena Condurso", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_21", "name": "Manuela Volpi", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_22", "name": "Marysol Perrone", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_23", "name": "Michela Camerra", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_24", "name": "Pamela Siozac", "title": "Sr Vice President", "country": "France"}, {"id": "ta_SrVicePresident_25", "name": "Paola Prota", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_26", "name": "Pilar Lopez Martín", "title": "Sr Vice President", "country": "Spain"}, {"id": "ta_SrVicePresident_27", "name": "Roberta Casillo", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_28", "name": "Sabrina Cheret", "title": "Sr Vice President", "country": "France"}, {"id": "ta_SrVicePresident_29", "name": "Serena Ravelli", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_30", "name": "Simona Carnevale", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_32", "name": "Valentina D’Agostino", "title": "Sr Vice President", "country": "Italy"}, {"id": "ta_SrVicePresident_33", "name": "Valérie D Barraud", "title": "Sr Vice President", "country": "France"}, {"id": "ta_SrVicePresident_34", "name": "Vanessa Anderlin", "title": "Sr Vice President", "country": "France"}], "Vice President": [{"id": "ta_VicePresident_1", "name": "Abigail Morales", "title": "Vice President", "country": "Spain"}, {"id": "ta_VicePresident_2", "name": "Alessandra Tucci", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_3", "name": "Alessia Dilena", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_4", "name": "Alessia Valentini", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_5", "name": "Alina Puiu", "title": "Vice President", "country": "United Kingdom"}, {"id": "ta_VicePresident_6", "name": "Alina Taporea", "title": "Vice President", "country": "Romania"}, {"id": "ta_VicePresident_7", "name": "Aline Link", "title": "Vice President", "country": "Germany"}, {"id": "ta_VicePresident_8", "name": "Andrea Einenkel", "title": "Vice President", "country": "Germany"}, {"id": "ta_VicePresident_9", "name": "Anju Rana", "title": "Vice President", "country": "United Kingdom"}, {"id": "ta_VicePresident_10", "name": "Annalisa  Ceccalupo", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_11", "name": "Barbara Audenino", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_12", "name": "Calina Hörler", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_13", "name": "Carina Rupp", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_14", "name": "Carla Simonetti", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_15", "name": "Caterina Vadala'", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_16", "name": "Celine Bardollet", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_18", "name": "Charlotte Bruwaene", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_19", "name": "Chiara D’Albero", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_20", "name": "Claudiu Marius Moldovan", "title": "Vice President", "country": "Sweden"}, {"id": "ta_VicePresident_21", "name": "Conny Handwerk", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_17", "name": "Céline Foucault", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_22", "name": "Daniela Del Vecchio", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_23", "name": "Daniela Turi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_24", "name": "Danut Adrian  Gagea", "title": "Vice President", "country": "Romania"}, {"id": "ta_VicePresident_25", "name": "Deborah Beccari", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_26", "name": "Delphine Donnarel", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_27", "name": "Desiree Verweij", "title": "Vice President", "country": "Netherlands"}, {"id": "ta_VicePresident_28", "name": "Elena Tatulescu", "title": "Vice President", "country": "Romania"}, {"id": "ta_VicePresident_29", "name": "Erik & Ellen Stroomer", "title": "Vice President", "country": "Netherlands"}, {"id": "ta_VicePresident_30", "name": "Esther Häner", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_31", "name": "Estíbaliz Segarra Echevarria", "title": "Vice President", "country": "Spain"}, {"id": "ta_VicePresident_32", "name": "Fabiola Manganiello", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_33", "name": "Fiorella Laudato", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_34", "name": "France Lamy", "title": "Vice President", "country": "Belgium"}, {"id": "ta_VicePresident_35", "name": "Francesca Curro’", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_36", "name": "Gianna Pasetto", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_37", "name": "Giovanna Riccioni", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_38", "name": "Giulia Fabrizi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_39", "name": "Giulia Regno", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_40", "name": "Giuseppe Scrima", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_41", "name": "Giuseppina Freni", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_42", "name": "Ilenia Faratro", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_43", "name": "Ilona Oser", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_44", "name": "Iolanda Perri", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_45", "name": "Jennifer Sánchez Cardona", "title": "Vice President", "country": "Spain"}, {"id": "ta_VicePresident_46", "name": "Joanna Rogowska", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_47", "name": "Karina Dag", "title": "Vice President", "country": "Denmark"}, {"id": "ta_VicePresident_48", "name": "Katia Gazzella", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_49", "name": "Katia Luongo", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_50", "name": "Katia Maria Alberta Tondi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_51", "name": "Kelly Guijt", "title": "Vice President", "country": "Netherlands"}, {"id": "ta_VicePresident_52", "name": "Kristin Sczesni", "title": "Vice President", "country": "Germany"}, {"id": "ta_VicePresident_53", "name": "Luca Gemma", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_54", "name": "Luisiana Pancini", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_55", "name": "Mamataz Shanaz", "title": "Vice President", "country": "United Arab Emirates"}, {"id": "ta_VicePresident_56", "name": "Mamta Rai", "title": "Vice President", "country": "United Kingdom"}, {"id": "ta_VicePresident_57", "name": "Maria  Di Grandi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_58", "name": "Maria Pino", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_59", "name": "Maria Popescu", "title": "Vice President", "country": "Romania"}, {"id": "ta_VicePresident_60", "name": "Marie Billaux", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_61", "name": "Mariska Vink", "title": "Vice President", "country": "Netherlands"}, {"id": "ta_VicePresident_62", "name": "Martina Filigheddu", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_63", "name": "Naomi Tripi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_64", "name": "Nicole Prando", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_66", "name": "Roberta Mareggini", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_67", "name": "Roberta Savina", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_68", "name": "Rosa Calissi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_69", "name": "Rosaria Attianese", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_70", "name": "Rossella Brafa Misicoro", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_71", "name": "Roxana Goghez", "title": "Vice President", "country": "Romania"}, {"id": "ta_VicePresident_72", "name": "Sabrina Donato", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_73", "name": "Sara Bello", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_74", "name": "Sara Schenetti", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_75", "name": "Sara Sperto Lentisco", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_76", "name": "Silvia Forza", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_77", "name": "Simone Emde", "title": "Vice President", "country": "Switzerland"}, {"id": "ta_VicePresident_78", "name": "Soner Demir", "title": "Vice President", "country": "Netherlands"}, {"id": "ta_VicePresident_79", "name": "Stefania Morra", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_80", "name": "Stefanie Knobel", "title": "Vice President", "country": "Germany"}, {"id": "ta_VicePresident_81", "name": "Tamara Sánchez Heredia", "title": "Vice President", "country": "Spain"}, {"id": "ta_VicePresident_82", "name": "Teresa Barbuto", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_83", "name": "Tiziana Maria Moretto", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_84", "name": "Valentina Giroletti", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_85", "name": "Valerie Vandon", "title": "Vice President", "country": "France"}, {"id": "ta_VicePresident_86", "name": "Vanessa Vecchi", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_87", "name": "Veronica Calilli", "title": "Vice President", "country": "Italy"}, {"id": "ta_VicePresident_88", "name": "Veronica Curzi", "title": "Vice President", "country": "Italy"}]};
+var bioLinks = {"1": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Michelle-Gr.aspx?web=1", "3": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Paolo-Meucci.aspx?web=1", "5": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Lorena-Gabor.aspx?web=1", "6": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Bianca-Plug.aspx?web=1", "7": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Nadine-Huber.aspx?web=1", "8": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIORGIA-MOTTOLA.aspx?web=1", "9": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Masha-Urbani.aspx?web=1", "11": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MARCELLA-LEONE.aspx?web=1", "12": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Gerrica-Caputo.aspx?web=1", "13": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ilaria-Sulas-&-Francesco-Pisoni1.aspx?web=1", "14": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Virna-Salo-SALOMONI.aspx?web=1", "15": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Vanille.aspx?web=1", "16": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Dorte-Klattschou.aspx?web=1", "17": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Helen-Blesa-Martinez.aspx?web=1", "18": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Stefano-Orru.aspx?web=1", "20": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/SERENA-ACCAI.aspx?web=1", "22": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Cristina-Ciraci.aspx?web=1", "25": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Edith-Samambwa.aspx?web=1", "26": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Florica-Ancu\u021ba-Gagea.aspx?web=1", "27": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Anouk-Van-Gelder.aspx?web=1", "28": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Anna-Perrella.aspx?web=1", "29": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/AGATHE-LEVY.aspx?web=1", "30": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Laura-Weijland.aspx?web=1", "31": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Stefania-Giaccardi.aspx?web=1", "32": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Chiara-Camerra.aspx?web=1", "33": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Claudio-Capozza.aspx?web=1", "35": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Angela-Ambrosio.aspx?web=1", "36": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIULIA-SETTEMBRINO.aspx?web=1", "37": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Irene-Casillo(1).aspx?web=1", "38": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Simona-Cappelli.aspx?web=1", "40": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Els-Goormans.aspx?web=1", "41": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Julie-Darbon.aspx?web=1", "43": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/LAURA-CENSI.aspx?web=1", "44": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Lorena-Exposito.aspx?web=1", "46": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Giada-Pasi.aspx?web=1", "47": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/PAOLA-SCANU.aspx?web=1", "49": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ana-Torres.aspx?web=1", "51": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MIRIAM-LOYO-OCIO.aspx?web=1", "54": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ELISA.aspx?web=1", "55": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Tatiana-Destandau.aspx?web=1", "58": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Elisabeth.aspx?web=1", "60": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ronny-Shuval-Tesler.aspx?web=1", "61": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ELENA-SAN-MART\u00cdN-T\u00c9LLEZ.aspx?web=1", "66": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Sara-Gambone.aspx?web=1", "67": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Marta-Garcia-Catalan1.aspx?web=1", "70": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Angela-Accardo.aspx?web=1", "71": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/JESSICA-MARCHOIS.aspx?web=1", "73": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Valent.aspx?web=1", "74": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Valentina-Battaglia(1).aspx?web=1", "75": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIORGIA-PAPARELLA(1).aspx?web=1", "76": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ALESSIA-CALIERNO-lessia-Caliern.aspx?web=1", "77": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GEORGIANA-MICLEA.aspx?web=1", "78": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/KLEFFER-PATRICK-PHILIPPE.aspx?web=1", "79": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GERARDO-UGLIANO.aspx?web=1", "80": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/DELPHINE-JOUANDOUDET.aspx?web=1", "82": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Massimiliano-Sciarretta.aspx?web=1", "84": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Antonella-Caccavo.aspx?web=1", "91": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Giulia-Giordano.aspx?web=1", "92": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Alessia-Napolitano-&-Mario-Antonelli.aspx?web=1", "95": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/S\u00e9verine-Cassiede-&-Gr\u00e9gory-Pougis.aspx?web=1", "97": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Michelle-Montisci.aspx?web=1", "98": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Nerea-Blanco-LLopis.aspx?web=1", "100": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Quiet-Strength,-Deep-Roots-By-Anja-Vanneste-\u2013-Vice-President,-Partner.co-I-was-raised-on-a-farm,-surrounded-b.aspx?web=1"};
+var extraLinks = {"michellegroote": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Michelle-Gr.aspx?web=1", "paolomeucci": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Paolo-Meucci.aspx?web=1", "lorenagabor": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Lorena-Gabor.aspx?web=1", "biancaplug": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Bianca-Plug.aspx", "nadinehuber": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Nadine-Huber.aspx?web=1", "giorgiamottola": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIORGIA-MOTTOLA.aspx?web=1", "mashaurbani": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Masha-Urbani.aspx?web=1", "marcellaleone": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MARCELLA-LEONE.aspx?web=1", "gerricacaputo": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Gerrica-Caputo.aspx?web=1", "ilariasulasfrancescopisoni": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ilaria-Sulas-&-Francesco-Pisoni1.aspx?web=1", "virnasalomoni": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Virna-Salo-SALOMONI.aspx?web=1", "vanillewieczorkowski": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Vanille.aspx?web=1", "dorteklattschou": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Dorte-Klattschou.aspx?web=1", "helenblesamartinez": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Helen-Blesa-Martinez.aspx?web=1", "stefanoorrù": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Stefano-Orru.aspx?web=1", "serenaaccai": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/SERENA-ACCAI.aspx?web=1", "cristinaciracivitosemeraro": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Cristina-Ciraci.aspx?web=1", "edithsamambwa": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Edith-Samambwa.aspx?web=1", "ancutagagea": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Florica-Ancu%C8%9Ba-Gagea.aspx", "anoukvangelder": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Anouk-Van-Gelder.aspx?web=1", "annaperrella": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Anna-Perrella.aspx?web=1", "agathelevy": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/AGATHE-LEVY.aspx?web=1", "lauraweijland": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Laura-Weijland.aspx?web=1", "stefaniagiaccardi": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Stefania-Giaccardi.aspx?web=1", "chiaracamerra": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Chiara-Camerra.aspx?web=1", "claudiocapozza": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Claudio-Capozza.aspx?web=1", "angelaambrosio": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Angela-Ambrosio.aspx?web=1", "giuliasettembrino": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIULIA-SETTEMBRINO.aspx?web=1", "irenecasillo": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Irene-Casillo(1).aspx", "simonacappelli": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Simona-Cappelli.aspx?web=1", "elsgoormans": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Els-Goormans.aspx?web=1", "juliedarbon": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Julie-Darbon.aspx?web=1", "lauracensi": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/LAURA-CENSI.aspx?web=1", "lorenaexpositogomez": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Lorena-Exposito-Gomez.aspx?web=1", "giadapasi": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Giada-Pasi.aspx?web=1", "paolascanu": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/PAOLA-SCANU.aspx?web=1", "anatorres": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ana-Torres.aspx?web=1", "miriamloyoocio": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MIRIAM-LOYO-OCIO.aspx?web=1", "elisacappellini": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ELISA.aspx?web=1", "tatianadestandau": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Tatiana-Destandau.aspx?web=1", "elisabethfossheim": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Elisabeth.aspx?web=1", "ronnyshuvaltesler": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Ronny-Shuval-Tesler.aspx?web=1", "elenasanmartíntéllez": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ELENA-SAN-MARTÍN-TÉLLEZ.aspx?web=1", "saragambone": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Sara-Gambone.aspx?web=1", "martagarciacatalan": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Marta-Garcia-Catalan1.aspx?web=1", "angelaaccardo": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Angela-Accardo.aspx?web=1", "jessicamarchois": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/JESSICA-MARCHOIS.aspx?web=1", "valentinadegregorio": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Valent.aspx?web=1", "alessandragiunta": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Valentina-Battaglia(1).aspx?web=1", "giorgiapaparella": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GIORGIA-PAPARELLA(1).aspx?web=1", "alessiacalierno": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/ALESSIA-CALIERNO-lessia-Caliern.aspx?web=1", "georgianamiclea": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GEORGIANA-MICLEA.aspx?web=1", "sylvieschnitzler": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/KLEFFER-PATRICK-PHILIPPE.aspx?web=1", "angelaruggiero": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/GERARDO-UGLIANO.aspx?web=1", "delphinejouandoudet": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/DELPHINE-JOUANDOUDET.aspx?web=1", "massimilianosciarretta": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Massimiliano-Sciarretta.aspx?web=1", "antonellacaccavo": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Antonella-Caccavo.aspx?web=1", "giuliagiordano": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Giulia-Giordano.aspx?web=1", "alessianapolitanomarioantonelli": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Alessia-Napolitano-&-Mario-Antonelli.aspx?web=1", "séverinecassiedegrégorypougis": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Séverine-Cassiede-&-Grégory-Pougis.aspx?web=1", "michellemontisci": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Michelle-Montisci.aspx?web=1", "nereablancollopis": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Nerea-Blanco-LLopis.aspx?web=1", "anjavanneste": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Quiet-Strength,-Deep-Roots-By-Anja-Vanneste-–-Vice-President,-Partner.co-I-was-raised-on-a-farm,-surrounded-b.aspx?web=1", "lauraheinen": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/LAURA-HEINEN.aspx", "erikazizzi": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/IRENE-CASILLO.aspx?web=1", "riccardocorallo": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Luca-Baglieri.aspx", "lorenaexpósitogómez": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Lorena-Exposito-Gomez.aspx?web=1", "sharonchiominto": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Sharon-Chiominto.aspx", "simonacirioni": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MAURO-MUZI-%26-SIMONA-CIRIONI.aspx", "simonacirionimauromuzi": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/MAURO-MUZI-%26-SIMONA-CIRIONI.aspx", "tizianavecchigiovannimangano": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Tiziana-Vecchi-e-Giovanni-Mangano(1).aspx", "tizianavecchiegiovannimangano": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Tiziana-Vecchi-e-Giovanni-Mangano(1).aspx", "floricaancutagagea": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Florica-Ancu%C8%9Ba-Gagea.aspx", "sylvie schnitzler": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/KLEFFER-PATRICK-PHILIPPE.aspx?web=1", "marikaamici": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/S.aspx?web=1", "julielemmelsschaeffler": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Julie-Lemmel-Schaeffler.aspx", "julielemmelshaeffler": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/Julie-Lemmel-Schaeffler.aspx", "virginiecannistra": "https://mypartnerco.sharepoint.com/sites/PowerRankingCall2022/SitePages/VIRGINIE-CANNISTRA.aspx"};
+var embeddedPhotos = window.__embeddedPhotos || {};
+var embeddedBios = window.__embeddedBios || {};
+
+var flags = {
+  NLD:'\uD83C\uDDF3\uD83C\uDDF1', ITA:'\uD83C\uDDEE\uD83C\uDDF9', FRA:'\uD83C\uDDEB\uD83C\uDDF7',
+  ESP:'\uD83C\uDDEA\uD83C\uDDF8', DEU:'\uD83C\uDDE9\uD83C\uDDEA', CHE:'\uD83C\uDDE8\uD83C\uDDED',
+  GBR:'\uD83C\uDDEC\uD83C\uDDE7', ROU:'\uD83C\uDDF7\uD83C\uDDF4', DNK:'\uD83C\uDDE9\uD83C\uDDF0',
+  ISR:'\uD83C\uDDEE\uD83C\uDDF1', ARE:'\uD83C\uDDE6\uD83C\uDDEA', NOR:'\uD83C\uDDF3\uD83C\uDDF4',
+  SWE:'\uD83C\uDDF8\uD83C\uDDEA', BEL:'\uD83C\uDDE7\uD83C\uDDEA', PRT:'\uD83C\uDDF5\uD83C\uDDF9',
+  AUT:'\uD83C\uDDE6\uD83C\uDDF9', POL:'\uD83C\uDDF5\uD83C\uDDF1', HUN:'\uD83C\uDDED\uD83C\uDDFA',
+  GRC:'\uD83C\uDDEC\uD83C\uDDF7', USA:'\uD83C\uDDFA\uD83C\uDDF8', MEX:'\uD83C\uDDF2\uD83C\uDDFD',
+  COL:'\uD83C\uDDE8\uD83C\uDDF4', CHL:'\uD83C\uDDE8\uD83C\uDDF1', ARG:'\uD83C\uDDE6\uD83C\uDDF7',
+  ZAF:'\uD83C\uDDFF\uD83C\uDDE6', AUS:'\uD83C\uDDE6\uD83C\uDDFA', SGP:'\uD83C\uDDF8\uD83C\uDDEC',
+  IND:'\uD83C\uDDEE\uD83C\uDDF3', FRANCE:'\uD83C\uDDEB\uD83C\uDDF7', SPAIN:'\uD83C\uDDEA\uD83C\uDDF8',
+  ITALY:'\uD83C\uDDEE\uD83C\uDDF9', GERMANY:'\uD83C\uDDE9\uD83C\uDDEA', NETHERLANDS:'\uD83C\uDDF3\uD83C\uDDF1',
+  SWITZERLAND:'\uD83C\uDDE8\uD83C\uDDED', ROMANIA:'\uD83C\uDDF7\uD83C\uDDF4', UK:'\uD83C\uDDEC\uD83C\uDDE7',
+  DENMARK:'\uD83C\uDDE9\uD83C\uDDF0', ISRAEL:'\uD83C\uDDEE\uD83C\uDDF1', UAE:'\uD83C\uDDE6\uD83C\uDDEA',
+  Italy:'\uD83C\uDDEE\uD83C\uDDF9', Spain:'\uD83C\uDDEA\uD83C\uDDF8', France:'\uD83C\uDDEB\uD83C\uDDF7',
+  Germany:'\uD83C\uDDE9\uD83C\uDDEA', Netherlands:'\uD83C\uDDF3\uD83C\uDDF1',
+  Switzerland:'\uD83C\uDDE8\uD83C\uDDED', Romania:'\uD83C\uDDF7\uD83C\uDDF4'
 };
 
-const top100Data = [{"id": 1, "name": "Michelle Groote", "title": "CHP2", "country": "NLD", "rank": 1}, {"id": 2, "name": "Robin Hautvast", "title": "Sr Supervisor", "country": "NLD", "rank": 2}, {"id": 3, "name": "Paolo Meucci", "title": "CHP1", "country": "CHE", "rank": 3}, {"id": 4, "name": "Isabel Rönnecke", "title": "CHP1", "country": "DEU", "rank": 4}, {"id": 5, "name": "Lorena Gabor", "title": "CHP3", "country": "ARE", "rank": 5}, {"id": 6, "name": "Bianca Plug", "title": "President", "country": "NLD", "rank": 6}, {"id": 7, "name": "Nadine Huber", "title": "CEO", "country": "CHE", "rank": 7}, {"id": 8, "name": "Giorgia Mottola", "title": "CHP1", "country": "ITA", "rank": 8}, {"id": 9, "name": "Masha Urbani", "title": "CHP3", "country": "ITA", "rank": 9}, {"id": 10, "name": "Delia Fratila", "title": "Officer", "country": "ROU", "rank": 10}, {"id": 11, "name": "Marcella Leone", "title": "Sr Officer", "country": "ITA", "rank": 11}, {"id": 12, "name": "Gerrica Caputo", "title": "President", "country": "ITA", "rank": 12}, {"id": 13, "name": "Ilaria Sulas & Francesco Pisoni", "title": "CEO", "country": "ITA", "rank": 13}, {"id": 14, "name": "Virna Salomoni", "title": "CHP1", "country": "ITA", "rank": 14}, {"id": 15, "name": "Vanille Wieczorkowski", "title": "CHP7", "country": "FRA", "rank": 15}, {"id": 16, "name": "Dorte Klattschou", "title": "Officer", "country": "DNK", "rank": 16}, {"id": 17, "name": "Helen Blesa Martinez", "title": "CHP2", "country": "ESP", "rank": 17}, {"id": 18, "name": "Stefano Orrù", "title": "CEO", "country": "ESP", "rank": 18}, {"id": 19, "name": "Jessica Jochum", "title": "Officer", "country": "DEU", "rank": 19}, {"id": 20, "name": "Serena Accai", "title": "CEO", "country": "CHE", "rank": 20}, {"id": 21, "name": "Miriam Casu", "title": "CEO", "country": "ITA", "rank": 21}, {"id": 22, "name": "Cristina Ciraci & Vito Semeraro", "title": "CHP2", "country": "ITA", "rank": 22}, {"id": 23, "name": "Michela Giugliano", "title": "Sr Officer", "country": "ITA", "rank": 23}, {"id": 24, "name": "Sarah Lischke", "title": "Sr Officer", "country": "DEU", "rank": 24}, {"id": 25, "name": "Edith Samambwa", "title": "Sr Officer", "country": "GBR", "rank": 25}, {"id": 26, "name": "Ancuta Gagea", "title": "President", "country": "ROU", "rank": 26}, {"id": 27, "name": "Anouk Van Gelder", "title": "Officer", "country": "NLD", "rank": 27}, {"id": 28, "name": "Anna Perrella", "title": "CEO", "country": "ITA", "rank": 28}, {"id": 29, "name": "Agathe Levy", "title": "CEO", "country": "FRA", "rank": 29}, {"id": 30, "name": "Laura Weijland", "title": "Officer", "country": "NLD", "rank": 30}, {"id": 31, "name": "Stefania Giaccardi", "title": "CHP1", "country": "ITA", "rank": 31}, {"id": 32, "name": "Chiara Camerra", "title": "CEO", "country": "ITA", "rank": 32}, {"id": 33, "name": "Claudio Capozza", "title": "Officer", "country": "ITA", "rank": 33}, {"id": 34, "name": "Erika Poncato", "title": "Officer", "country": "DEU", "rank": 34}, {"id": 35, "name": "Angela Ambrosio", "title": "CEO", "country": "ITA", "rank": 35}, {"id": 36, "name": "Giulia Settembrino", "title": "CEO", "country": "ITA", "rank": 36}, {"id": 37, "name": "Irene Casillo", "title": "CEO", "country": "ITA", "rank": 37}, {"id": 38, "name": "Simona Cappelli", "title": "CEO", "country": "ITA", "rank": 38}, {"id": 40, "name": "Els Goormans", "title": "Officer", "country": "NLD", "rank": 40}, {"id": 41, "name": "Julie Darbon", "title": "CHP2", "country": "FRA", "rank": 41}, {"id": 42, "name": "Giusy Scognamiglio", "title": "Officer", "country": "ITA", "rank": 42}, {"id": 43, "name": "Laura Censi", "title": "Officer", "country": "ITA", "rank": 43}, {"id": 44, "name": "Lorena Exposito Gomez", "title": "Sr Officer", "country": "ESP", "rank": 44}, {"id": 45, "name": "Marko Rönnecke", "title": "Officer", "country": "DEU", "rank": 45}, {"id": 46, "name": "Giada Pasi", "title": "CEO", "country": "ITA", "rank": 46}, {"id": 47, "name": "Paola Scanu", "title": "President", "country": "ITA", "rank": 47}, {"id": 48, "name": "Luxmi Devi", "title": "Officer", "country": "GBR", "rank": 48}, {"id": 49, "name": "Ana Torres", "title": "CEO", "country": "ESP", "rank": 49}, {"id": 50, "name": "Maria Cristina Mustazza", "title": "Officer", "country": "ITA", "rank": 50}, {"id": 51, "name": "Miriam Loyo Ocio", "title": "Officer", "country": "ESP", "rank": 51}, {"id": 52, "name": "Elly Kok", "title": "Sr Vice President", "country": "NLD", "rank": 52}, {"id": 53, "name": "Veronica Curzi", "title": "Vice President", "country": "ITA", "rank": 53}, {"id": 54, "name": "Elisa Cappellini", "title": "President", "country": "ITA", "rank": 54}, {"id": 55, "name": "Tatiana Destandau", "title": "CHP1", "country": "FRA", "rank": 55}, {"id": 56, "name": "Veronica Calilli", "title": "Vice President", "country": "ITA", "rank": 56}, {"id": 57, "name": "Marie-Kristin Deul", "title": "Officer", "country": "DEU", "rank": 57}, {"id": 58, "name": "Elisabeth Fossheim", "title": "Sr Vice President", "country": "DNK", "rank": 58}, {"id": 59, "name": "Simona Cirioni & Mauro Muzi", "title": "CHP1", "country": "ITA", "rank": 59}, {"id": 60, "name": "Ronny Shuval Tesler", "title": "Officer", "country": "ISR", "rank": 60}, {"id": 61, "name": "Elena San Martín Téllez", "title": "Vice President", "country": "ESP", "rank": 61}, {"id": 62, "name": "Andrea Einenkel", "title": "Vice President", "country": "DEU", "rank": 62}, {"id": 63, "name": "Florian Bogdan Stroie", "title": "Manager", "country": "ROU", "rank": 63}, {"id": 64, "name": "Désirée Sirignano", "title": "Sr Vice President", "country": "CHE", "rank": 64}, {"id": 65, "name": "Rosy Velasco", "title": "Officer", "country": "ITA", "rank": 65}, {"id": 66, "name": "Sara Gambone", "title": "President", "country": "ITA", "rank": 66}, {"id": 67, "name": "Marta Garcia Catalan", "title": "CEO", "country": "ESP", "rank": 67}, {"id": 68, "name": "Marie Billaux", "title": "Vice President", "country": "FRA", "rank": 68}, {"id": 69, "name": "Stefanie Knobel", "title": "Vice President", "country": "DEU", "rank": 69}, {"id": 70, "name": "Angela Accardo", "title": "Officer", "country": "ITA", "rank": 70}, {"id": 71, "name": "Jessica Marchois", "title": "Sr Officer", "country": "FRA", "rank": 71}, {"id": 72, "name": "Pamela Siozac", "title": "Sr Vice President", "country": "FRA", "rank": 72}, {"id": 73, "name": "Valentina De Gregorio", "title": "Sr Officer", "country": "ITA", "rank": 73}, {"id": 74, "name": "Alessandra Giunta", "title": "Officer", "country": "ITA", "rank": 74}, {"id": 75, "name": "Giorgia Paparella", "title": "Officer", "country": "ITA", "rank": 75}, {"id": 76, "name": "Alessia Calierno", "title": "Officer", "country": "ITA", "rank": 76}, {"id": 77, "name": "Georgiana Miclea", "title": "CHP4", "country": "ROU", "rank": 77}, {"id": 78, "name": "Sylvie Schnitzler", "title": "Sr Officer", "country": "FRA", "rank": 78}, {"id": 79, "name": "Angela Ruggiero", "title": "Sr Officer", "country": "ITA", "rank": 79}, {"id": 80, "name": "Delphine Jouandoudet", "title": "CEO", "country": "FRA", "rank": 80}, {"id": 81, "name": "Chiara Leone", "title": "Sr Vice President", "country": "ITA", "rank": 81}, {"id": 82, "name": "Massimiliano Sciarretta", "title": "CEO", "country": "ITA", "rank": 82}, {"id": 83, "name": "Concetta Catalano", "title": "Sr Vice President", "country": "ITA", "rank": 83}, {"id": 84, "name": "Antonella Caccavo", "title": "CEO", "country": "ITA", "rank": 84}, {"id": 85, "name": "Geetu Bhardwaj Sharma", "title": "Officer", "country": "ESP", "rank": 85}, {"id": 86, "name": "Janine Pfirter", "title": "Officer", "country": "CHE", "rank": 87}, {"id": 87, "name": "Gabriella Innocenti", "title": "Officer", "country": "CHE", "rank": 88}, {"id": 88, "name": "Rocio Pérez", "title": "Vice President", "country": "ESP", "rank": 89}, {"id": 89, "name": "Antje Thalheim", "title": "Sr Director", "country": "DEU", "rank": 90}, {"id": 90, "name": "Giulia Giordano", "title": "CEO", "country": "ITA", "rank": 91}, {"id": 91, "name": "Alessia Napolitano & Mario Antonelli", "title": "CHP1", "country": "ITA", "rank": 92}, {"id": 92, "name": "Tiziana Vecchi & Giovanni Mangano", "title": "Officer", "country": "ITA", "rank": 93}, {"id": 93, "name": "Alessia Brignola", "title": "Officer", "country": "ITA", "rank": 94}, {"id": 94, "name": "Séverine Cassiede & Grégory Pougis", "title": "CHP3", "country": "FRA", "rank": 95}, {"id": 95, "name": "Tamara Sánchez Heredia", "title": "Vice President", "country": "ESP", "rank": 96}, {"id": 96, "name": "Michelle Montisci", "title": "CEO", "country": "ITA", "rank": 97}, {"id": 97, "name": "Nerea Blanco Llopis", "title": "Officer", "country": "ESP", "rank": 98}, {"id": 98, "name": "Jaspreet Kaur", "title": "Officer", "country": "ITA", "rank": 99}, {"id": 99, "name": "Anja Vanneste", "title": "Officer", "country": "NLD", "rank": 100}];
-const recData = {"Saving Bonus": [{"id": "sb_1", "name": "Bernadette King-Turner", "title": "Saving Bonus", "country": "ARE", "bp_id": "N1622149"}, {"id": "sb_2", "name": "Julia Saez Garcia", "title": "Saving Bonus", "country": "ESP", "bp_id": "A8077148"}, {"id": "sb_3", "name": "Jessica Marchois", "title": "Saving Bonus", "country": "FRA", "bp_id": "A9062023"}, {"id": "sb_4", "name": "Carine Cantet", "title": "Saving Bonus", "country": "FRA", "bp_id": "A6963817"}, {"id": "sb_5", "name": "Laurie Granger", "title": "Saving Bonus", "country": "FRA", "bp_id": "A8787143"}, {"id": "sb_6", "name": "Nancy Amiel", "title": "Saving Bonus", "country": "FRA", "bp_id": "A7814242"}, {"id": "sb_7", "name": "Melissa Consonni", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7162689"}, {"id": "sb_8", "name": "Angela Ruggiero", "title": "Saving Bonus", "country": "ITA", "bp_id": "N5813157"}, {"id": "sb_9", "name": "Elisa Federico", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7189796"}, {"id": "sb_10", "name": "Sharon Chiominto", "title": "Saving Bonus", "country": "ITA", "bp_id": "A9134705"}, {"id": "sb_11", "name": "Alessandra Filoramo", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7170328"}, {"id": "sb_12", "name": "Elettra Moro", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7178567"}, {"id": "sb_13", "name": "Elisa Cappellini", "title": "Saving Bonus", "country": "ITA", "bp_id": "N5185112"}, {"id": "sb_14", "name": "Pamela Zullino", "title": "Saving Bonus", "country": "ITA", "bp_id": "A8808724"}, {"id": "sb_15", "name": "Laura Maddaluno", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7980724"}, {"id": "sb_16", "name": "Antonio Caldarelli", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7243748"}, {"id": "sb_17", "name": "ANNA SOAVE & FANUEL SPEZIA", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7162447"}, {"id": "sb_18", "name": "Michelle Groote", "title": "Saving Bonus", "country": "NLD", "bp_id": "N7577135"}, {"id": "sb_19", "name": "Sarah Abate", "title": "Saving Bonus", "country": "ITA", "bp_id": "A7162491"}], "MDC": [{"id": "mdc_1", "name": "Julie Darbon", "title": "Million Dollar Club", "country": "FRANCE", "bp_id": "A5545157"}, {"id": "mdc_2", "name": "Helen Blesa Martínez", "title": "Million Dollar Club", "country": "SPAIN", "bp_id": "A7167863"}, {"id": "mdc_3", "name": "Veronica Carbonaro", "title": "Million Dollar Club", "country": "ITALY", "bp_id": "A7162094"}, {"id": "mdc_4", "name": "Alessia Napolitano & Mario Antonelli", "title": "Million Dollar Club", "country": "ITALY", "bp_id": "A7162115"}, {"id": "mdc_5", "name": "Simona Moretti", "title": "Million Dollar Club", "country": "ITALY", "bp_id": "A7161493"}, {"id": "mdc_6", "name": "Delphine Jouandoudet", "title": "Million Dollar Club", "country": "FRANCE", "bp_id": "A6133660"}, {"id": "mdc_7", "name": "Cristina Ciraci & Vito Semeraro", "title": "Million Dollar Club", "country": "ITALY", "bp_id": "A7244579"}, {"id": "mdc_8", "name": "Stefano Orrù", "title": "Million Dollar Club", "country": "SPAIN", "bp_id": "A7161281"}, {"id": "mdc_9", "name": "Ilaria Sulas", "title": "Million Dollar Club", "country": "ITALY", "bp_id": "A7164011"}], "CHP3": [{"id": "ta_CHP3_1", "name": "Lorena Gabor", "title": "CHP3", "country": "United Arab Emirates", "bp_id": "A7213450"}], "CHP2": [{"id": "ta_CHP2_1", "name": "Michelle Groote", "title": "CHP2", "country": "Netherlands", "bp_id": "N7577135"}], "CHP1": [{"id": "ta_CHP1_1", "name": "Giorgia Mottola", "title": "CHP1", "country": "Italy", "bp_id": "N5591560"}, {"id": "ta_CHP1_2", "name": "Isabel Rönnecke", "title": "CHP1", "country": "Germany", "bp_id": "N8405541"}, {"id": "ta_CHP1_3", "name": "Paolo Meucci", "title": "CHP1", "country": "Switzerland", "bp_id": "A7161273"}, {"id": "ta_CHP1_4", "name": "Virna Salomoni", "title": "CHP1", "country": "Italy", "bp_id": "A9094960"}], "CEO": [{"id": "ta_CEO_1", "name": "Irene Casillo", "title": "CEO", "country": "Italy", "bp_id": "N5271922"}, {"id": "ta_CEO_2", "name": "Laura Heinen", "title": "CEO", "country": "Belgium", "bp_id": "N5244492"}, {"id": "ta_CEO_3", "name": "Nadine Huber", "title": "CEO", "country": "Switzerland", "bp_id": "N7630490"}], "President": [{"id": "ta_President_1", "name": "Ancuta Gagea", "title": "President", "country": "Romania", "bp_id": "N6150693"}, {"id": "ta_President_2", "name": "Bianca Plug", "title": "President", "country": "Netherlands", "bp_id": "N7800765"}, {"id": "ta_President_3", "name": "Elisa Cappellini", "title": "President", "country": "Italy", "bp_id": "N5185112"}, {"id": "ta_President_4", "name": "Erika Zizzi", "title": "President", "country": "Italy", "bp_id": "N5575152"}, {"id": "ta_President_5", "name": "Riccardo Corallo", "title": "President", "country": "Italy", "bp_id": "N5407057"}, {"id": "ta_President_6", "name": "Sara Gambone", "title": "President", "country": "Italy", "bp_id": "A7162694"}], "Sr Officer": [{"id": "ta_SrOfficer_1", "name": "Edith Samambwa", "title": "Sr Officer", "country": "United Kingdom", "bp_id": "N6498262"}, {"id": "ta_SrOfficer_2", "name": "Jessica Marchois", "title": "Sr Officer", "country": "France", "bp_id": "A9062023"}, {"id": "ta_SrOfficer_3", "name": "Lorena Exposito Gomez", "title": "Sr Officer", "country": "Spain", "bp_id": "N5323716"}, {"id": "ta_SrOfficer_4", "name": "Marcella Leone", "title": "Sr Officer", "country": "Italy", "bp_id": "N5883889"}, {"id": "ta_SrOfficer_5", "name": "Michela Giugliano", "title": "Sr Officer", "country": "Italy", "bp_id": "N6011908"}, {"id": "ta_SrOfficer_6", "name": "Sarah & Sandro Lischke Gbr", "title": "Sr Officer", "country": "Germany", "bp_id": "N8405662"}, {"id": "ta_SrOfficer_7", "name": "Sharon Chiominto", "title": "Sr Officer", "country": "Italy", "bp_id": "A9134705"}, {"id": "ta_SrOfficer_8", "name": "Sylvie Schnitzler", "title": "Sr Officer", "country": "France", "bp_id": "A9132645"}], "Officer": [{"id": "ta_Officer_1", "name": "Alessandra Giunta", "title": "Officer", "country": "Italy", "bp_id": "N5923476"}, {"id": "ta_Officer_2", "name": "Alessia Brignola", "title": "Officer", "country": "Italy", "bp_id": "A8916350"}, {"id": "ta_Officer_3", "name": "Alessia Calierno", "title": "Officer", "country": "Italy", "bp_id": "N5692863"}, {"id": "ta_Officer_4", "name": "Angela Accardo", "title": "Officer", "country": "Italy", "bp_id": "N7305247"}, {"id": "ta_Officer_5", "name": "Anouk Van Gelder", "title": "Officer", "country": "Netherlands", "bp_id": "N7583646"}, {"id": "ta_Officer_6", "name": "Carmen Ancuta Sandu", "title": "Officer", "country": "Romania", "bp_id": "N5118165"}, {"id": "ta_Officer_7", "name": "Carmen Maria Garcia Rodrigo", "title": "Officer", "country": "Germany", "bp_id": "A7335289"}, {"id": "ta_Officer_8", "name": "Daniela Scoccimarro", "title": "Officer", "country": "Italy", "bp_id": "N8197793"}, {"id": "ta_Officer_9", "name": "Delia Fratila", "title": "Officer", "country": "Romania", "bp_id": "N8219957"}, {"id": "ta_Officer_10", "name": "Dorte Klattschou", "title": "Officer", "country": "Denmark", "bp_id": "N7580623"}, {"id": "ta_Officer_11", "name": "Elisabetta Dolce", "title": "Officer", "country": "Italy", "bp_id": "A7715368"}, {"id": "ta_Officer_12", "name": "Els Goormans", "title": "Officer", "country": "Netherlands", "bp_id": "N7579617"}, {"id": "ta_Officer_13", "name": "Erika Poncato", "title": "Officer", "country": "Germany", "bp_id": "N8405635"}, {"id": "ta_Officer_14", "name": "Francis Fontijne-Nobbe", "title": "Officer", "country": "Switzerland", "bp_id": "N7631214"}, {"id": "ta_Officer_15", "name": "Gabriella Innocenti", "title": "Officer", "country": "Switzerland", "bp_id": "N7631381"}, {"id": "ta_Officer_16", "name": "Geetu Bhardwaj Sharma", "title": "Officer", "country": "Spain", "bp_id": "N7599664"}, {"id": "ta_Officer_17", "name": "Giorgia Paparella", "title": "Officer", "country": "Italy", "bp_id": "N5849153"}, {"id": "ta_Officer_18", "name": "Giuliana Lomuscio", "title": "Officer", "country": "Italy", "bp_id": "A8782004"}, {"id": "ta_Officer_19", "name": "Giuseppina Scognamiglio", "title": "Officer", "country": "Italy", "bp_id": "N8229161"}, {"id": "ta_Officer_20", "name": "Illari Venturini", "title": "Officer", "country": "Italy", "bp_id": "N5441911"}, {"id": "ta_Officer_21", "name": "Janine Pfirter", "title": "Officer", "country": "Switzerland", "bp_id": "N7697168"}, {"id": "ta_Officer_22", "name": "Jaspreet Kaur", "title": "Officer", "country": "Italy", "bp_id": "N7596421"}, {"id": "ta_Officer_23", "name": "Jennifer Frank", "title": "Officer", "country": "Switzerland", "bp_id": "N7631344"}, {"id": "ta_Officer_24", "name": "Jessica Jochum", "title": "Officer", "country": "Germany", "bp_id": "N8405614"}, {"id": "ta_Officer_25", "name": "Jody Mohr", "title": "Officer", "country": "Belgium", "bp_id": "N5464497"}, {"id": "ta_Officer_26", "name": "Julie Lemmel Schaeffler", "title": "Officer", "country": "France", "bp_id": "A8778085"}, {"id": "ta_Officer_27", "name": "Laura Weijland", "title": "Officer", "country": "Netherlands", "bp_id": "N8088372"}, {"id": "ta_Officer_28", "name": "Ludovic Darnaud", "title": "Officer", "country": "France", "bp_id": "A9062671"}, {"id": "ta_Officer_29", "name": "Luxmi Devi", "title": "Officer", "country": "United Kingdom", "bp_id": "N8147654"}, {"id": "ta_Officer_30", "name": "Maria Cristina Mustazza", "title": "Officer", "country": "Italy", "bp_id": "N7881259"}, {"id": "ta_Officer_31", "name": "Marie Lourenco", "title": "Officer", "country": "France", "bp_id": "A8690094"}, {"id": "ta_Officer_32", "name": "Marie-Kristin Deul", "title": "Officer", "country": "Germany", "bp_id": "N8405998"}, {"id": "ta_Officer_33", "name": "Marika Amici", "title": "Officer", "country": "Italy", "bp_id": "A7162744"}, {"id": "ta_Officer_34", "name": "Marko Rönnecke", "title": "Officer", "country": "Germany", "bp_id": "N8405789"}, {"id": "ta_Officer_35", "name": "Miriam Loyo Ocio", "title": "Officer", "country": "Spain", "bp_id": "N5342446"}, {"id": "ta_Officer_36", "name": "Nerea Blanco Llopis", "title": "Officer", "country": "Spain", "bp_id": "N5737088"}, {"id": "ta_Officer_37", "name": "Rosy Velasco", "title": "Officer", "country": "Italy", "bp_id": "N7276737"}, {"id": "ta_Officer_38", "name": "Simona Luzzana", "title": "Officer", "country": "Italy", "bp_id": "N6055836"}, {"id": "ta_Officer_39", "name": "Stefania Bresciani", "title": "Officer", "country": "Italy", "bp_id": "A7871064"}, {"id": "ta_Officer_40", "name": "Sudha Shrestha", "title": "Officer", "country": "United Kingdom", "bp_id": "N7584227"}, {"id": "ta_Officer_41", "name": "Veronica Ambrosio", "title": "Officer", "country": "Italy", "bp_id": "N5687529"}, {"id": "ta_Officer_42", "name": "Virginie Cannistra", "title": "Officer", "country": "Switzerland", "bp_id": "N5576592"}], "Sr Vice President": [{"id": "ta_SrVicePresident_1", "name": "Alessandra Lo Rosso", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5487050"}, {"id": "ta_SrVicePresident_2", "name": "Alice Garzoni", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5735545"}, {"id": "ta_SrVicePresident_3", "name": "Annalisa Delli Paoli", "title": "Sr Vice President", "country": "Italy", "bp_id": "A9284981"}, {"id": "ta_SrVicePresident_4", "name": "Antu Bracher", "title": "Sr Vice President", "country": "Switzerland", "bp_id": "N7972186"}, {"id": "ta_SrVicePresident_5", "name": "Audrey Batut", "title": "Sr Vice President", "country": "France", "bp_id": "N5808969"}, {"id": "ta_SrVicePresident_6", "name": "Chiara Avanti", "title": "Sr Vice President", "country": "Italy", "bp_id": "N6238641"}, {"id": "ta_SrVicePresident_7", "name": "Chiara Leone", "title": "Sr Vice President", "country": "Italy", "bp_id": "N8166439"}, {"id": "ta_SrVicePresident_8", "name": "Cindy Vroomen", "title": "Sr Vice President", "country": "Netherlands", "bp_id": "N7785607"}, {"id": "ta_SrVicePresident_9", "name": "Concetta Catalano", "title": "Sr Vice President", "country": "Italy", "bp_id": "N6083357"}, {"id": "ta_SrVicePresident_10", "name": "Cristina Suárez Sánchez", "title": "Sr Vice President", "country": "Spain", "bp_id": "N5731821"}, {"id": "ta_SrVicePresident_11", "name": "Désirée Sirignano", "title": "Sr Vice President", "country": "Switzerland", "bp_id": "N7972185"}, {"id": "ta_SrVicePresident_12", "name": "Elly Kok", "title": "Sr Vice President", "country": "Netherlands", "bp_id": "N8184495"}, {"id": "ta_SrVicePresident_13", "name": "Francesca  Martinelli", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5803787"}, {"id": "ta_SrVicePresident_14", "name": "Francesca Mapelli", "title": "Sr Vice President", "country": "Italy", "bp_id": "A8745279"}, {"id": "ta_SrVicePresident_15", "name": "Gaia Napoli", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5742449"}, {"id": "ta_SrVicePresident_16", "name": "Giovanna Di Luggo", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5964118"}, {"id": "ta_SrVicePresident_17", "name": "Giovanna Pacilli", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5717117"}, {"id": "ta_SrVicePresident_18", "name": "Giulia Chiovenda", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5682645"}, {"id": "ta_SrVicePresident_19", "name": "Laila Cinti", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5616839"}, {"id": "ta_SrVicePresident_20", "name": "Maddalena Condurso", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5434878"}, {"id": "ta_SrVicePresident_21", "name": "Manuela Volpi", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5825807"}, {"id": "ta_SrVicePresident_22", "name": "Marysol Perrone", "title": "Sr Vice President", "country": "Italy", "bp_id": "N6061415"}, {"id": "ta_SrVicePresident_23", "name": "Michela Camerra", "title": "Sr Vice President", "country": "Italy", "bp_id": "N5907886"}, {"id": "ta_SrVicePresident_24", "name": "Pamela Siozac", "title": "Sr Vice President", "country": "France", "bp_id": "N7527453"}, {"id": "ta_SrVicePresident_25", "name": "Paola Prota", "title": "Sr Vice President", "country": "Italy", "bp_id": "N6831748"}, {"id": "ta_SrVicePresident_26", "name": "Pilar Lopez Martín", "title": "Sr Vice President", "country": "Spain", "bp_id": "N5402747"}, {"id": "ta_SrVicePresident_27", "name": "Roberta Casillo", "title": "Sr Vice President", "country": "Italy", "bp_id": "N7210664"}, {"id": "ta_SrVicePresident_28", "name": "Sabrina Cheret", "title": "Sr Vice President", "country": "France", "bp_id": "A9043258"}, {"id": "ta_SrVicePresident_29", "name": "Serena Ravelli", "title": "Sr Vice President", "country": "Italy", "bp_id": "A7165462"}, {"id": "ta_SrVicePresident_30", "name": "Simona Carnevale", "title": "Sr Vice President", "country": "Italy", "bp_id": "N6065945"}, {"id": "ta_SrVicePresident_31", "name": "Solène Le Normand (Hide From Public Recognition)", "title": "Sr Vice President", "country": "France", "bp_id": "A9057906"}, {"id": "ta_SrVicePresident_32", "name": "Valentina D’Agostino", "title": "Sr Vice President", "country": "Italy", "bp_id": "A8808862"}, {"id": "ta_SrVicePresident_33", "name": "Valérie D Barraud", "title": "Sr Vice President", "country": "France", "bp_id": "A7021153"}, {"id": "ta_SrVicePresident_34", "name": "Vanessa Anderlin", "title": "Sr Vice President", "country": "France", "bp_id": "A7051575"}], "Vice President": [{"id": "ta_VicePresident_1", "name": "Abigail Morales", "title": "Vice President", "country": "Spain", "bp_id": "N6093378"}, {"id": "ta_VicePresident_2", "name": "Alessandra Tucci", "title": "Vice President", "country": "Italy", "bp_id": "A7894501"}, {"id": "ta_VicePresident_3", "name": "Alessia Dilena", "title": "Vice President", "country": "Italy", "bp_id": "N7737258"}, {"id": "ta_VicePresident_4", "name": "Alessia Valentini", "title": "Vice President", "country": "Italy", "bp_id": "N5989172"}, {"id": "ta_VicePresident_5", "name": "Alina Puiu", "title": "Vice President", "country": "United Kingdom", "bp_id": "N6959258"}, {"id": "ta_VicePresident_6", "name": "Alina Taporea", "title": "Vice President", "country": "Romania", "bp_id": "N7468085"}, {"id": "ta_VicePresident_7", "name": "Aline Link", "title": "Vice President", "country": "Germany", "bp_id": "N8405882"}, {"id": "ta_VicePresident_8", "name": "Andrea Einenkel", "title": "Vice President", "country": "Germany", "bp_id": "N8405964"}, {"id": "ta_VicePresident_9", "name": "Anju Rana", "title": "Vice President", "country": "United Kingdom", "bp_id": "N7585325"}, {"id": "ta_VicePresident_10", "name": "Annalisa  Ceccalupo", "title": "Vice President", "country": "Italy", "bp_id": "N5643705"}, {"id": "ta_VicePresident_11", "name": "Barbara Audenino", "title": "Vice President", "country": "Italy", "bp_id": "N6184341"}, {"id": "ta_VicePresident_12", "name": "Calina Hörler", "title": "Vice President", "country": "Switzerland", "bp_id": "N7633288"}, {"id": "ta_VicePresident_13", "name": "Carina Rupp", "title": "Vice President", "country": "Switzerland", "bp_id": "N7690681"}, {"id": "ta_VicePresident_14", "name": "Carla Simonetti", "title": "Vice President", "country": "Italy", "bp_id": "N6964233"}, {"id": "ta_VicePresident_15", "name": "Caterina Vadala'", "title": "Vice President", "country": "Italy", "bp_id": "N5790847"}, {"id": "ta_VicePresident_16", "name": "Celine Bardollet", "title": "Vice President", "country": "France", "bp_id": "N5560502"}, {"id": "ta_VicePresident_17", "name": "Céline Foucault", "title": "Vice President", "country": "France", "bp_id": "A9219108"}, {"id": "ta_VicePresident_18", "name": "Charlotte Bruwaene", "title": "Vice President", "country": "France", "bp_id": "A8734026"}, {"id": "ta_VicePresident_19", "name": "Chiara D’Albero", "title": "Vice President", "country": "Italy", "bp_id": "N8834553"}, {"id": "ta_VicePresident_20", "name": "Claudiu Marius Moldovan", "title": "Vice President", "country": "Sweden", "bp_id": "N6404511"}, {"id": "ta_VicePresident_21", "name": "Conny Handwerk", "title": "Vice President", "country": "France", "bp_id": "N5128720"}, {"id": "ta_VicePresident_22", "name": "Daniela Del Vecchio", "title": "Vice President", "country": "Switzerland", "bp_id": "N5512804"}, {"id": "ta_VicePresident_23", "name": "Daniela Turi", "title": "Vice President", "country": "Italy", "bp_id": "N8118322"}, {"id": "ta_VicePresident_24", "name": "Danut Adrian  Gagea", "title": "Vice President", "country": "Romania", "bp_id": "N6193877"}, {"id": "ta_VicePresident_25", "name": "Deborah Beccari", "title": "Vice President", "country": "Italy", "bp_id": "N5799401"}, {"id": "ta_VicePresident_26", "name": "Delphine Donnarel", "title": "Vice President", "country": "France", "bp_id": "A7184347"}, {"id": "ta_VicePresident_27", "name": "Desiree Verweij", "title": "Vice President", "country": "Netherlands", "bp_id": "N7640041"}, {"id": "ta_VicePresident_28", "name": "Elena Tatulescu", "title": "Vice President", "country": "Romania", "bp_id": "N7530686"}, {"id": "ta_VicePresident_29", "name": "Erik & Ellen Stroomer", "title": "Vice President", "country": "Netherlands", "bp_id": "N8113144"}, {"id": "ta_VicePresident_30", "name": "Esther Häner", "title": "Vice President", "country": "Switzerland", "bp_id": "N8148281"}, {"id": "ta_VicePresident_31", "name": "Estíbaliz Segarra Echevarria", "title": "Vice President", "country": "Spain", "bp_id": "N8642017"}, {"id": "ta_VicePresident_32", "name": "Fabiola Manganiello", "title": "Vice President", "country": "Italy", "bp_id": "N5154780"}, {"id": "ta_VicePresident_33", "name": "Fiorella Laudato", "title": "Vice President", "country": "Italy", "bp_id": "N6370919"}, {"id": "ta_VicePresident_34", "name": "France Lamy", "title": "Vice President", "country": "Belgium", "bp_id": "N7825587"}, {"id": "ta_VicePresident_35", "name": "Francesca Curro’", "title": "Vice President", "country": "Italy", "bp_id": "N7008845"}, {"id": "ta_VicePresident_36", "name": "Gianna Pasetto", "title": "Vice President", "country": "Italy", "bp_id": "N6468415"}, {"id": "ta_VicePresident_37", "name": "Giovanna Riccioni", "title": "Vice President", "country": "Italy", "bp_id": "N6328437"}, {"id": "ta_VicePresident_38", "name": "Giulia Fabrizi", "title": "Vice President", "country": "Italy", "bp_id": "N8153910"}, {"id": "ta_VicePresident_39", "name": "Giulia Regno", "title": "Vice President", "country": "Italy", "bp_id": "N5280610"}, {"id": "ta_VicePresident_40", "name": "Giuseppe Scrima", "title": "Vice President", "country": "Italy", "bp_id": "A7860320"}, {"id": "ta_VicePresident_41", "name": "Giuseppina Freni", "title": "Vice President", "country": "Italy", "bp_id": "N6192891"}, {"id": "ta_VicePresident_42", "name": "Ilenia Faratro", "title": "Vice President", "country": "Italy", "bp_id": "N6410352"}, {"id": "ta_VicePresident_43", "name": "Ilona Oser", "title": "Vice President", "country": "Switzerland", "bp_id": "N7863521"}, {"id": "ta_VicePresident_44", "name": "Iolanda Perri", "title": "Vice President", "country": "Italy", "bp_id": "N5202183"}, {"id": "ta_VicePresident_45", "name": "Jennifer Sánchez Cardona", "title": "Vice President", "country": "Spain", "bp_id": "A8961432"}, {"id": "ta_VicePresident_46", "name": "Joanna Rogowska", "title": "Vice President", "country": "Italy", "bp_id": "N5351487"}, {"id": "ta_VicePresident_47", "name": "Karina Dag", "title": "Vice President", "country": "Denmark", "bp_id": "N8408877"}, {"id": "ta_VicePresident_48", "name": "Katia Gazzella", "title": "Vice President", "country": "Italy", "bp_id": "N6224201"}, {"id": "ta_VicePresident_49", "name": "Katia Luongo", "title": "Vice President", "country": "Italy", "bp_id": "N5464361"}, {"id": "ta_VicePresident_50", "name": "Katia Maria Alberta Tondi", "title": "Vice President", "country": "Italy", "bp_id": "N6611377"}, {"id": "ta_VicePresident_51", "name": "Kelly Guijt", "title": "Vice President", "country": "Netherlands", "bp_id": "N8221562"}, {"id": "ta_VicePresident_52", "name": "Kristin Sczesni", "title": "Vice President", "country": "Germany", "bp_id": "N8406716"}, {"id": "ta_VicePresident_53", "name": "Luca Gemma", "title": "Vice President", "country": "Italy", "bp_id": "N6274456"}, {"id": "ta_VicePresident_54", "name": "Luisiana Pancini", "title": "Vice President", "country": "Italy", "bp_id": "N8015198"}, {"id": "ta_VicePresident_55", "name": "Mamataz Shanaz", "title": "Vice President", "country": "United Arab Emirates", "bp_id": "N8080529"}, {"id": "ta_VicePresident_56", "name": "Mamta Rai", "title": "Vice President", "country": "United Kingdom", "bp_id": "N7585751"}, {"id": "ta_VicePresident_57", "name": "Maria  Di Grandi", "title": "Vice President", "country": "Italy", "bp_id": "N5546156"}, {"id": "ta_VicePresident_58", "name": "Maria Pino", "title": "Vice President", "country": "Switzerland", "bp_id": "N6997594"}, {"id": "ta_VicePresident_59", "name": "Maria Popescu", "title": "Vice President", "country": "Romania", "bp_id": "N6939247"}, {"id": "ta_VicePresident_60", "name": "Marie Billaux", "title": "Vice President", "country": "France", "bp_id": "N8350261"}, {"id": "ta_VicePresident_61", "name": "Mariska Vink", "title": "Vice President", "country": "Netherlands", "bp_id": "N8311418"}, {"id": "ta_VicePresident_62", "name": "Martina Filigheddu", "title": "Vice President", "country": "Italy", "bp_id": "N8448153"}, {"id": "ta_VicePresident_63", "name": "Naomi Tripi", "title": "Vice President", "country": "Italy", "bp_id": "N5868930"}, {"id": "ta_VicePresident_64", "name": "Nicole Prando", "title": "Vice President", "country": "Italy", "bp_id": "N7847286"}, {"id": "ta_VicePresident_65", "name": "No Recognition, Emails, Bucs, Calls", "title": "Vice President", "country": "Israel", "bp_id": "A7039171"}, {"id": "ta_VicePresident_66", "name": "Roberta Mareggini", "title": "Vice President", "country": "Switzerland", "bp_id": "N7736980"}, {"id": "ta_VicePresident_67", "name": "Roberta Savina", "title": "Vice President", "country": "Italy", "bp_id": "N6551926"}, {"id": "ta_VicePresident_68", "name": "Rosa Calissi", "title": "Vice President", "country": "Italy", "bp_id": "N6846759"}, {"id": "ta_VicePresident_69", "name": "Rosaria Attianese", "title": "Vice President", "country": "Italy", "bp_id": "N6030104"}, {"id": "ta_VicePresident_70", "name": "Rossella Brafa Misicoro", "title": "Vice President", "country": "Italy", "bp_id": "N6338564"}, {"id": "ta_VicePresident_71", "name": "Roxana Goghez", "title": "Vice President", "country": "Romania", "bp_id": "N8310945"}, {"id": "ta_VicePresident_72", "name": "Sabrina Donato", "title": "Vice President", "country": "Italy", "bp_id": "N6357654"}, {"id": "ta_VicePresident_73", "name": "Sara Bello", "title": "Vice President", "country": "Italy", "bp_id": "N6057975"}, {"id": "ta_VicePresident_74", "name": "Sara Schenetti", "title": "Vice President", "country": "Italy", "bp_id": "N7158574"}, {"id": "ta_VicePresident_75", "name": "Sara Sperto Lentisco", "title": "Vice President", "country": "Italy", "bp_id": "N8343115"}, {"id": "ta_VicePresident_76", "name": "Silvia Forza", "title": "Vice President", "country": "Italy", "bp_id": "A8770303"}, {"id": "ta_VicePresident_77", "name": "Simone Emde", "title": "Vice President", "country": "Switzerland", "bp_id": "N7633114"}, {"id": "ta_VicePresident_78", "name": "Soner Demir", "title": "Vice President", "country": "Netherlands", "bp_id": "A1541327"}, {"id": "ta_VicePresident_79", "name": "Stefania Morra", "title": "Vice President", "country": "Italy", "bp_id": "N5812240"}, {"id": "ta_VicePresident_80", "name": "Stefanie Knobel", "title": "Vice President", "country": "Germany", "bp_id": "N8406108"}, {"id": "ta_VicePresident_81", "name": "Tamara Sánchez Heredia", "title": "Vice President", "country": "Spain", "bp_id": "N8620756"}, {"id": "ta_VicePresident_82", "name": "Teresa Barbuto", "title": "Vice President", "country": "Italy", "bp_id": "A7815939"}, {"id": "ta_VicePresident_83", "name": "Tiziana Maria Moretto", "title": "Vice President", "country": "Italy", "bp_id": "N8565805"}, {"id": "ta_VicePresident_84", "name": "Valentina Giroletti", "title": "Vice President", "country": "Italy", "bp_id": "N5746078"}, {"id": "ta_VicePresident_85", "name": "Valerie Vandon", "title": "Vice President", "country": "France", "bp_id": "N6043563"}, {"id": "ta_VicePresident_86", "name": "Vanessa Vecchi", "title": "Vice President", "country": "Italy", "bp_id": "N5564086"}, {"id": "ta_VicePresident_87", "name": "Veronica Calilli", "title": "Vice President", "country": "Italy", "bp_id": "N8208633"}, {"id": "ta_VicePresident_88", "name": "Veronica Curzi", "title": "Vice President", "country": "Italy", "bp_id": "N7514067"}]};
+var TA_SUBTABS = ['CHP3','CHP2','CHP1','CEO','President','Sr Officer','Officer','Sr Vice President','Vice President'];
+var activeTab = 'top100';
+var activeSubtab = 'CHP3';
+var filtered = [];
+var currentUploadId = null;
 
-// SP links for TOP100
-const spLinks = {};
-for (let i = 1; i <= 99; i++) {
-  spLinks[i] = `https://mypartnerco.sharepoint.com/sites/NewAgeRecognition/Lists/TOP100_2026/DispForm.aspx?ID=${i}`;
-}
+function getFlag(c) { return flags[c] || ''; }
 
-const embeddedPhotos = window.__embeddedPhotos || {};
-const embeddedBios = window.__embeddedBios || {
-  29: 'Agathe lives in the south of France. She has 2 daughters.',
-  74: 'Pharmacist living in Sicily, with her husband and their dog Luna.',
-  6: 'Hard-working, loyal and direct. After burnout in a previous MLM, Bianca discovered Partner.co and never looked back. Athlete, traveler — building a team and offering others a real chance at freedom.'
-};
-
-// TABS structure
-const TABS = [
-  { id: 'top100', label: 'TOP 100', badge: top100Data.length },
-  { id: 'sb', label: 'Saving Bonus', badge: (recData['Saving Bonus'] || []).length },
-  { id: 'mdc', label: 'MDC', badge: (recData['MDC'] || []).length },
-  { id: 'ta', label: 'Title Advancement', badge: null },
-];
-
-const TA_SUBTABS = ['CHP3','CHP2','CHP1','CEO','President','Sr Officer','Officer','Sr Vice President','Vice President'];
-
-let activeTab = 'top100';
-let activeSubtab = 'CHP3';
-let currentModalIndex = 0;
-let filtered = [];
-let currentUploadId = null;
-
-function getCountry(c) {
-  return countryNames[c] || c || '';
+function getLink(bp) {
+  if (bp.rank && bioLinks[bp.rank]) return bioLinks[bp.rank];
+  var k = (bp.name || '').toLowerCase().replace(/[^a-z]/g,'');
+  if (extraLinks[k]) return extraLinks[k];
+  var k2 = (bp.name || '').toLowerCase().replace(/[ &-]/g,'');
+  return extraLinks[k2] || '';
 }
 
 function getCurrentData() {
@@ -240,272 +146,239 @@ function getCurrentData() {
 }
 
 function buildTabs() {
-  const wrap = document.getElementById('tabsWrap');
-  wrap.innerHTML = TABS.map(t => {
-    const badge = t.badge !== null ? `<span class="tab-badge">${t.badge}</span>` : '';
-    return `<div class="tab ${activeTab === t.id ? 'active' : ''}" onclick="switchTab('${t.id}')">${t.label}${badge}</div>`;
-  }).join('');
+  var tabs = [
+    {id:'top100', label:'TOP 100', badge:top100Data.length},
+    {id:'sb', label:'Saving Bonus', badge:(recData['Saving Bonus']||[]).length},
+    {id:'mdc', label:'MDC', badge:(recData['MDC']||[]).length},
+    {id:'ta', label:'Title Advancement', badge:null}
+  ];
+  var out = '';
+  for (var i=0; i<tabs.length; i++) {
+    var t = tabs[i];
+    var badge = t.badge !== null ? '<span class="tab-badge">'+t.badge+'</span>' : '';
+    var cls = activeTab===t.id ? 'tab active' : 'tab';
+    out += '<div class="'+cls+'" onclick="switchTab(\''+t.id+'\')">'+t.label+badge+'</div>';
+  }
+  document.getElementById('tabsWrap').innerHTML = out;
 }
 
 function buildSubtabs() {
-  const wrap = document.getElementById('subtabsWrap');
-  if (activeTab !== 'ta') {
-    wrap.classList.remove('visible');
-    return;
-  }
+  var wrap = document.getElementById('subtabsWrap');
+  if (activeTab !== 'ta') { wrap.classList.remove('visible'); return; }
   wrap.classList.add('visible');
-  wrap.innerHTML = TA_SUBTABS.map(s => {
-    const count = (recData[s] || []).length;
-    return `<div class="subtab ${activeSubtab === s ? 'active' : ''}" onclick="switchSubtab('${s}')">${s} <span style="opacity:0.6;font-size:10px;">${count}</span></div>`;
-  }).join('');
+  var out = '';
+  for (var i=0; i<TA_SUBTABS.length; i++) {
+    var s = TA_SUBTABS[i];
+    var count = (recData[s]||[]).length;
+    var cls = activeSubtab===s ? 'subtab active' : 'subtab';
+    out += '<div class="'+cls+'" onclick="switchSubtab(\''+s+'\')">'+s+' <span style="opacity:0.6;font-size:10px;">'+count+'</span></div>';
+  }
+  wrap.innerHTML = out;
 }
 
 function switchTab(id) {
   activeTab = id;
   if (id === 'ta') activeSubtab = 'CHP3';
-  buildTabs();
-  buildSubtabs();
-  populateCountries();
-  filterCards();
+  buildTabs(); buildSubtabs(); populateCountries(); filterCards();
 }
 
 function switchSubtab(s) {
   activeSubtab = s;
-  buildSubtabs();
-  filterCards();
+  buildSubtabs(); filterCards();
 }
 
 function populateCountries() {
-  const data = getCurrentData();
-  const sel = document.getElementById('countryFilter');
-  const current = sel.value;
-  const countries = [...new Set(data.map(b => b.country || b.market || '').filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">All Countries</option>' + countries.map(c => `<option value="${c}" ${c === current ? 'selected' : ''}>${getCountry(c)}</option>`).join('');
+  var data = getCurrentData();
+  var sel = document.getElementById('countryFilter');
+  var cur = sel.value;
+  var seen = {}, countries = [];
+  for (var i=0; i<data.length; i++) {
+    var c = data[i].country || '';
+    if (c && !seen[c]) { seen[c]=1; countries.push(c); }
+  }
+  countries.sort();
+  var out = '<option value="">All Countries</option>';
+  for (var i=0; i<countries.length; i++) {
+    var c = countries[i];
+    var f = getFlag(c);
+    out += '<option value="'+c+'"'+(c===cur?' selected':'')+'>'+(f?f+' ':'')+c+'</option>';
+  }
+  sel.innerHTML = out;
 }
 
 function filterCards() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const country = document.getElementById('countryFilter').value;
-  const data = getCurrentData();
-  const isNumber = /^\d+$/.test(q);
-  
-  filtered = data.filter(b => {
-    const name = (b.name || '').toLowerCase();
-    const title = (b.title || '').toLowerCase();
-    const c = b.country || '';
-    const rank = b.rank ? String(b.rank) : '';
-    const matchQ = !q || (isNumber ? rank === q : (name.includes(q) || title.includes(q) || c.toLowerCase().includes(q)));
-    const matchC = !country || c === country;
-    return matchQ && matchC;
-  });
-  
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var country = document.getElementById('countryFilter').value;
+  var data = getCurrentData();
+  var isNum = /^\d+$/.test(q);
+  filtered = [];
+  for (var i=0; i<data.length; i++) {
+    var b = data[i];
+    var matchQ = !q || (isNum ? String(b.rank||'')===q : ((b.name||'').toLowerCase().indexOf(q)>-1 || (b.title||'').toLowerCase().indexOf(q)>-1 || (b.country||'').toLowerCase().indexOf(q)>-1));
+    var matchC = !country || (b.country||'')===country;
+    if (matchQ && matchC) filtered.push(b);
+  }
   renderCards();
 }
 
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function renderCards() {
-  const grid = document.getElementById('cardGrid');
-  const withPhoto = filtered.filter(b => embeddedPhotos[b.id || b.rank]).length;
-  document.getElementById('resultsCount').textContent = `${filtered.length} Brand Partners — ${withPhoto} with photo`;
-
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="no-results">No results found</div>';
-    return;
+  var grid = document.getElementById('cardGrid');
+  var withPhoto = 0;
+  for (var i=0; i<filtered.length; i++) {
+    if (embeddedPhotos[(filtered[i].name||'').toLowerCase().replace(/[^a-z]/g,'')]) withPhoto++;
   }
+  document.getElementById('resultsCount').textContent = filtered.length + ' Brand Partners \u2014 ' + withPhoto + ' with photo';
+  if (!filtered.length) { grid.innerHTML = '<div class="no-results">No results found</div>'; return; }
 
-  grid.innerHTML = filtered.map((bp, idx) => {
-    const photoKey = (bp.name || '').toLowerCase().replace(/[^a-z]/g, '');
-    const photo = embeddedPhotos[photoKey];
-    const bio = embeddedBios[bp.rank] || embeddedBios[bp.id] || '';
-    const link = bp.rank ? spLinks[bp.rank] : '';
-    const country = getCountry(bp.country || bp.market || '');
-    const rankLabel = bp.rank ? `#${bp.rank}` : (idx + 1) + '';
-
-    return `<div class="card">
-      <div class="card-photo-wrap">
-        ${photo ? `<img src="${photo}" alt="${bp.name}" />` : `<div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>`}
-        <span class="rank-badge">${rankLabel}</span>
-        <button class="upload-btn" onclick="triggerSingle('${photoKey}',event)">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          ${photo ? 'Change' : 'Upload'}
-        </button>
-      </div>
-      <div class="card-body">
-        <div class="card-name">${bp.name}</div>
-        <div class="card-title">${bp.title || ''}</div>
-        <div class="card-country">${country}</div>
-        ${bio ? `<div class="card-bio">${bio}</div>` : ''}
-        <button class="bio-btn" onclick="openModal(${idx}, event)">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          View profile
-        </button>
-      </div>
-    </div>`;
-  }).join('');
+  var parts = [];
+  for (var i=0; i<filtered.length; i++) {
+    var bp = filtered[i];
+    var pk = (bp.name||'').toLowerCase().replace(/[^a-z]/g,'');
+    var photo = embeddedPhotos[pk];
+    var link = getLink(bp);
+    var flag = getFlag(bp.country||'');
+    var rankLabel = (activeTab === 'top100' && bp.rank) ? '#'+bp.rank : '';
+    var title = bp.title || '';
+    var photoHtml = photo
+      ? '<img src="'+photo+'" alt="'+esc(bp.name)+'" />'
+      : '<div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>';
+    var bioBtn = link
+      ? '<a href="'+link+'" target="_blank" onclick="event.stopPropagation()" class="view-bio">View Bio</a>'
+      : '';
+    parts.push(
+      '<div class="card" data-key="'+esc(pk)+'">'
+      + '<div class="card-photo-wrap">'
+        + photoHtml
+        + (rankLabel ? '<span class="rank-badge">'+rankLabel+'</span>' : '')
+        + '<button class="upload-btn" onclick="uploadClick(event,this.parentNode.parentNode)">'+(photo?'Change':'Upload')+'</button>'
+      + '</div>'
+      + '<div class="card-body">'
+        + '<div class="card-name">'+esc(bp.name||'')+'</div>'
+        + '<div class="card-title">'+esc(title)+'</div>'
+        + '<div class="card-country">'+flag+'</div>'
+        + bioBtn
+      + '</div>'
+      + '</div>'
+    );
+  }
+  grid.innerHTML = parts.join('');
 }
 
-function triggerSingle(key, e) {
+function uploadClick(e, card) {
   e.stopPropagation();
-  currentUploadId = key;
+  currentUploadId = card.dataset.key;
   document.getElementById('fileInput').click();
 }
 
-function resizeImage(file, callback) {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX = 600;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > MAX) { h = h * MAX / w; w = MAX; } }
-      else { if (h > MAX) { w = w * MAX / h; h = MAX; } }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      callback(canvas.toDataURL('image/jpeg', 0.75));
+function resizeImage(file, cb) {
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var c = document.createElement('canvas');
+      var MAX=600, w=img.width, h=img.height;
+      if (w>h){if(w>MAX){h=h*MAX/w;w=MAX;}}else{if(h>MAX){w=w*MAX/h;h=MAX;}}
+      c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.75));
     };
     img.src = ev.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
 function handleSingleUpload(e) {
-  const file = e.target.files[0];
-  if (!file || currentUploadId === null) return;
-  resizeImage(file, data => {
+  var file = e.target.files[0];
+  if (!file || !currentUploadId) return;
+  resizeImage(file, function(data) {
     embeddedPhotos[currentUploadId] = data;
     renderCards();
-    setStatus('✓ Photo saved — click Export with photos to keep it permanently');
+    setStatus('\u2713 Photo saved \u2014 click Export to keep permanently');
   });
   e.target.value = '';
 }
 
-function normalizeName(str) {
-  return str.toLowerCase().replace(/[^a-z]/g, '');
-}
+function normName(s) { return (s||'').toLowerCase().replace(/[^a-z]/g,''); }
 
 function handleBulkUpload(e) {
-  const files = Array.from(e.target.files);
+  var files = Array.prototype.slice.call(e.target.files);
   if (!files.length) return;
-  setStatus(`Processing ${files.length} photos...`, 0);
-
-  // Get all people across all tabs
-  const allPeople = [
-    ...top100Data,
-    ...(recData['Saving Bonus'] || []),
-    ...(recData['MDC'] || []),
-    ...TA_SUBTABS.flatMap(s => recData[s] || [])
-  ];
-
-  let processed = 0, matched = 0;
-
-  function processBatch(startIdx) {
-    const batch = files.slice(startIdx, startIdx + 50);
-    let batchDone = 0;
-    batch.forEach(file => {
-      const fileName = normalizeName(file.name.replace(/\.[^/.]+$/, ''));
-      const bp = allPeople.find(b => {
-        const bpNorm = normalizeName(b.name || '');
-        const first = normalizeName((b.name || '').split(' ')[0]);
-        const last = normalizeName((b.name || '').split(' ').pop());
-        return fileName.includes(bpNorm) || bpNorm.includes(fileName) ||
-               (fileName.includes(first) && fileName.includes(last));
-      });
-      if (bp) {
-        resizeImage(file, data => {
-          const key = (bp.name || '').toLowerCase().replace(/[^a-z]/g, '');
-          embeddedPhotos[key] = data;
-          matched++;
-          batchDone++; processed++;
-          setStatus(`Processing... ${processed}/${files.length}, ${matched} matched`, 0);
-          if (batchDone === batch.length && processed < files.length) setTimeout(() => processBatch(startIdx + 50), 100);
-          else if (processed === files.length) { renderCards(); setStatus(`Done! ${matched} photos matched out of ${files.length}.`); }
-        });
-      } else {
-        batchDone++; processed++;
-        setStatus(`Processing... ${processed}/${files.length}, ${matched} matched`, 0);
-        if (batchDone === batch.length && processed < files.length) setTimeout(() => processBatch(startIdx + 50), 100);
-        else if (processed === files.length) { renderCards(); setStatus(`Done! ${matched} photos matched out of ${files.length}.`); }
-      }
-    });
+  setStatus('Processing '+files.length+' photos...', 0);
+  var all = top100Data.slice();
+  var cats = Object.keys(recData);
+  for (var c=0; c<cats.length; c++) { var arr=recData[cats[c]]; for (var p=0; p<arr.length; p++) all.push(arr[p]); }
+  var processed=0, matched=0;
+  function batch(start) {
+    var b = files.slice(start, start+50);
+    var done=0;
+    for (var i=0; i<b.length; i++) {
+      (function(file) {
+        var fn = normName(file.name.replace(/\.[^/.]+$/,''));
+        var bp = null;
+        for (var j=0; j<all.length; j++) {
+          var nm = normName(all[j].name);
+          var parts = (all[j].name||'').split(' ');
+          var first=normName(parts[0]), last=normName(parts[parts.length-1]);
+          if (fn.indexOf(nm)>-1||nm.indexOf(fn)>-1||(fn.indexOf(first)>-1&&fn.indexOf(last)>-1)){bp=all[j];break;}
+        }
+        if (bp) {
+          resizeImage(file, function(data) {
+            embeddedPhotos[normName(bp.name)] = data;
+            matched++; done++; processed++;
+            setStatus('Processing... '+processed+'/'+files.length+', '+matched+' matched', 0);
+            if (done===b.length&&processed<files.length) setTimeout(function(){batch(start+50);},100);
+            else if (processed===files.length){renderCards();setStatus(matched+' photos matched. Click Export to save.');}
+          });
+        } else {
+          done++; processed++;
+          if (done===b.length&&processed<files.length) setTimeout(function(){batch(start+50);},100);
+          else if (processed===files.length){renderCards();setStatus(matched+' matched. Click Export to save.');}
+        }
+      })(b[i]);
+    }
   }
-  processBatch(0);
+  batch(0);
   e.target.value = '';
 }
 
-function setStatus(msg, duration = 3000) {
-  const el = document.getElementById('statusMsg');
-  el.textContent = msg;
-  if (duration) setTimeout(() => el.textContent = '', duration);
-}
-
-// MODAL
-function openModal(idx, e) {
-  if (e) e.stopPropagation();
-  currentModalIndex = idx;
-  showModal(idx);
-}
-
-function showModal(idx) {
-  const bp = filtered[idx];
-  if (!bp) return;
-  const photoKey = (bp.name || '').toLowerCase().replace(/[^a-z]/g, '');
-  const photo = embeddedPhotos[photoKey];
-  const bio = embeddedBios[bp.rank] || embeddedBios[bp.id] || '';
-  const link = bp.rank ? spLinks[bp.rank] : '';
-  const country = getCountry(bp.country || bp.market || '');
-
-  document.getElementById('modalName').textContent = bp.name;
-  document.getElementById('modalSub').textContent = (bp.title || '') + ' · ' + country + (bp.rank ? ' · #' + bp.rank : '');
-  
-  const photoWrap = document.getElementById('modalPhotoWrap');
-  photoWrap.innerHTML = photo
-    ? `<img src="${photo}" class="modal-photo" alt="${bp.name}" />`
-    : '<div class="modal-photo-placeholder">No photo yet</div>';
-
-  document.getElementById('modalBio').textContent = bio || '';
-  
-  const spBtn = document.getElementById('modalSpBtn');
-  if (link) { spBtn.href = link; spBtn.style.display = 'inline-flex'; }
-  else { spBtn.style.display = 'none'; }
-
-  document.getElementById('modalOverlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function navigateModal(dir) {
-  const newIdx = currentModalIndex + dir;
-  if (newIdx >= 0 && newIdx < filtered.length) { currentModalIndex = newIdx; showModal(newIdx); }
-}
-
-function closeModal(event) {
-  if (event.target === document.getElementById('modalOverlay')) closeModalDirect();
-}
-
-function closeModalDirect() {
-  document.getElementById('modalOverlay').classList.remove('active');
-  document.body.style.overflow = '';
+function setStatus(msg, dur) {
+  document.getElementById('statusMsg').textContent = msg;
+  if (dur===undefined) dur=3000;
+  if (dur) setTimeout(function(){ document.getElementById('statusMsg').textContent=''; }, dur);
 }
 
 function exportWithPhotos() {
-  setStatus('Preparing export...', 0);
-  const photoData = JSON.stringify(embeddedPhotos);
-  const bioData = JSON.stringify(embeddedBios);
-  const injection = `<script>window.__embeddedPhotos = ${photoData}; window.__embeddedBios = ${bioData};<\/script>`;
-  let html = document.documentElement.outerHTML;
-  html = html.replace('<head>', '<head>\n' + injection);
-  const blob = new Blob([html], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'recognition_pxp26_with_photos.html'; a.click();
+  setStatus('Preparing...', 0);
+  var pd = JSON.stringify(embeddedPhotos);
+  var bd = JSON.stringify(embeddedBios);
+  var t1='<scr'+'ipt>', t2='<\\/scr'+'ipt>';
+  var inj = t1+'window.__embeddedPhotos='+pd+';window.__embeddedBios='+bd+';'+t2;
+  var h = document.documentElement.outerHTML;
+  h = h.replace('<head>', '<head>\n'+inj);
+  var blob=new Blob([h],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='recognition_pxp26_with_photos.html'; a.click();
   URL.revokeObjectURL(url);
-  setStatus('✓ Exported! Upload to GitHub to update the link.');
+  setStatus('Exported! Upload to GitHub to update the link.');
 }
 
-// INIT
-buildTabs();
-buildSubtabs();
-populateCountries();
-filterCards();
+function fixSticky() {
+  var header=document.querySelector('header');
+  var tabs=document.getElementById('tabsWrap');
+  var subtabs=document.getElementById('subtabsWrap');
+  if (header&&tabs) {
+    tabs.style.top = header.offsetHeight+'px';
+    subtabs.style.top = (header.offsetHeight+tabs.offsetHeight)+'px';
+  }
+}
+
+buildTabs(); buildSubtabs(); populateCountries(); filterCards();
+fixSticky();
+window.addEventListener('resize', fixSticky);
+
 </script>
 </body>
 </html>
